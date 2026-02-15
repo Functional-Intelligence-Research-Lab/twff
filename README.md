@@ -1,7 +1,7 @@
 # Tracked Writing File Format (TWFF) Specification v0.1
 
 <center>
-<img src=image.png width=50%>
+<img alt="figure1:visualization of sample TWFF declaration" src=image.png width=50%>
 </center>
 
 ## Overview
@@ -44,11 +44,12 @@ This separation allows:
 | ------------- | ------------- |
 | Local-First |All telemetry is generated and stored on the creator's machine. No third-party servers are involved unless the user chooses to share. |
 | Deterministic | Events are recorded in real time, providing a complete, non‑probabilistic audit trail.|
-|Privacy-Preserving|	The final content is stored separately from process metadata. Users control what to share.|
+|Privacy-Preserving| The final content is stored separately from process metadata. Users control what to share.|
 | Extensible | The container format allows for additional assets, transcripts, and signatures.|
-|Open Standard	| TWFF is free to implement, with no proprietary lock-in.|
+|Open Standard | TWFF is free to implement, with no proprietary lock-in.|
 
 ## Container Structure
+
 A TWFF file is a ZIP archive with the following recommended structure:
 
 ```text
@@ -72,16 +73,17 @@ document.twff
 
 | File    | Convention     | Required? |
 | ------------- | ------------- |------------- |
-Primary content	| `content/document.xhtml`	| Yes |
-Process log	| `meta/process-log.json`	| Yes |
-Manifest	| `meta/manifest.xml` | Recommended | 
-Signatures | `META-INF/signatures.xml`	| Optional |
-Chat transcript	| `meta/chat-transcript.json` | Optional |
-Images | `content/images/*`	| As needed |
+Primary content | `content/document.xhtml` | Yes |
+Process log | `meta/process-log.json` | Yes |
+Manifest | `meta/manifest.xml` | Recommended |
+Signatures | `META-INF/signatures.xml` | Optional |
+Chat transcript | `meta/chat-transcript.json` | Optional |
+Images | `content/images/*` | As needed |
 
 ### Content Format
 
 TWFF recommends XHTML for the primary content because:
+
 - It is XML-based and strict, making parsing and validation reliable.
 - It supports embedded semantic markup (e.g., <span> with @data-* attributes).
 - It is human-readable and widely supported.
@@ -183,36 +185,38 @@ The process log (meta/process-log.json) captures how the document was constructe
 
 | Field     | Type    | Description |
 | ------------- | ------------- |-------------|
-|`session_start`|	Beginning of a writing session	|(none)|
-|`session_end`	|End of session|	(none)|
-|`edit`	|Human typing or deletion|	`char_delta`, `position_start`, p`osition_end`, `source` ("human")
-|`paste`	|Text pasted from external source|	`char_count`, `source` ("external" or "ai"), `position_start`, `position_end`|
-|`ai_interaction`	|AI assistant invoked	|`interaction_type`, `model`, `input_preview`, `output_preview`, `output_length`, `position_start`, `position_end`, `acceptance`|
-|`chat_interaction`|	Multi-turn chat with AI|	`message_count`, `message_preview`, `source_file` (link to full transcript)|
-|`focus_change`	|User switcd away from editor|`duration_ms`|
-|`checkpoint`	|Auto-save snapshot|	`char_count_total`, `position` (cursr position)|
+|`session_start`| Beginning of a writing session |(none)|
+|`session_end` |End of session| (none)|
+|`edit` |Human typing or deletion| `char_delta`, `position_start`, p`osition_end`, `source` ("human")
+|`paste` |Text pasted from external source| `char_count`, `source` ("external" or "ai"), `position_start`, `position_end`|
+|`ai_interaction` |AI assistant invoked |`interaction_type`, `model`, `input_preview`, `output_preview`, `output_length`, `position_start`, `position_end`, `acceptance`|
+|`chat_interaction`| Multi-turn chat with AI| `message_count`, `message_preview`, `source_file` (link to full transcript)|
+|`focus_change` |User switcd away from editor|`duration_ms`|
+|`checkpoint` |Auto-save snapshot| `char_count_total`, `position` (cursr position)|
 
 #### `interaction_type` Values (for `ai_interaction`)
 
-|Value	|Description|
+|Value |Description|
 | ------------- | ------------- |
-|`brainstorm`	| AI generated ideas or outline |
-|`draft`	|AI wrote thye full pasage|
+|`brainstorm` | AI generated ideas or outline |
+|`draft` |AI wrote thye full pasage|
 | `paraphrase`| AI rewrote existing text|
-|`summarize`	|AI summarized content|
-|`expand`	| AI expanded a short phrase|
-|`continue`	| AI continued from cursor|
+|`summarize` |AI summarized content|
+|`expand` | AI expanded a short phrase|
+|`continue` | AI continued from cursor|
 
 #### `acceptance` Values
 
 |Value |Description |
 | ------------- | ------------- |
-|`fully_accepted`|	All output used as-is|
-|`partially_accepted`|	Some output used, some edited|
-|`rejected`|	Output discarded (optional)|
-|`modified`|	Output used but significantly edited|
+|`fully_accepted`| All output used as-is|
+|`partially_accepted`| Some output used, some edited|
+|`rejected`| Output discarded (optional)|
+|`modified`| Output used but significantly edited|
 
-### Chat Transcript Schema (chat-transcript.json) — Optional
+## Optional Components
+
+### Chat Transcript Schema (chat-transcript.json)
 
 For complete transparency, the container may include the full chat history with AI assistants.
 
@@ -220,6 +224,153 @@ For complete transparency, the container may include the full chat history with 
 {
   "session_id": "uuid-session-12345",
   "messages": [
-  
+    {
+      "timestamp": "2026-02-16T09:10:45Z",
+      "role": "user",
+      "content": "make this paragraph more formal: 'so yeah, the thing about AI is it's pretty cool but also kinda scary'"
+    },
+    {
+      "timestamp": "2026-02-16T09:11:02Z",
+      "role": "assistant",
+      "model": "integrated-llm-v1",
+      "content": "The advent of artificial intelligence presents a duality: remarkable potential tempered by significant societal considerations."
+    },
+    {
+      "timestamp": "2026-02-16T09:11:15Z",
+      "role": "user",
+      "content": "that works, insert it"
+    }
+  ]
+}
 ```
+
+### Manifest (meta/manifest.xml)
+
+The manifest lists all files in the container and their media types, similar to EPUB's package.opf.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <item id="content" href="content/document.xhtml" media-type="application/xhtml+xml"/>
+  <item id="log" href="meta/process-log.json" media-type="application/json"/>
+  <item id="chat" href="meta/chat-transcript.json" media-type="application/json"/>
+  <item id="img1" href="content/images/figure1.png" media-type="image/png"/>
+</manifest>
+```
+
+### Integrity & Signing
+
+To prevent tampering, TWFF supports cryptographic signing of the container.
+
+#### Simple Hash Chain (POC for V0.1)
+
+Include a `signature` field at the top level of `process-log.json` that is a SHA-256 hash of the entire events array concatenated with a session-specific salt. This detects any modification to the log.
+
+#### Digital Signatures (Future)
+
+For public verification, the container can include detached signatures using a user-controlled key pair. The META-INF/signatures.xml file would contain:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<signatures>
+  <signature file="meta/process-log.json" algorithm="SHA256withRSA">
+    base64-encoded-signature-here
+  </signature>
+</signatures>
+```
+
+## Privacy Guarantees
+
+TWFF is designed with privacy as a first-class concern.
+
+### What TWFF Explicitly Does NOT Store
+
+- Individual keystroke content (only aggregated character counts per edit block)
+- Raw prompts or full AI responses (only metadata and optional previews)
+- Personally identifiable information beyond an anonymized user ID
+- Screen recordings or mouse movements
+
+### User Control
+
+All data is generated locally on the user's machine.
+
+- The user decides when and with whom to share the container.
+- The user can share only the JSON log (for research) or the full container (for verification).
+- The anonymous user ID is user-generated and can be rotated at any time.
+
 ### Generating Visualizations
+
+### POC Algorithm
+
+1. Parse the XHTML content into a DOM tree.
+2. For each event with position_start and position_end, locate the corresponding text node and character range.
+3. Wrap the range with a `<span>` element and add appropriate CSS classes and data-* attributes.
+4. Render the annotated XHTML with a legend and tooltips.
+
+### Example output
+
+See figure 1
+
+```html
+<p>
+    The rapid advancement of artificial intelligence has transformed many aspects of our daily lives.
+    <span class="ai-paraphrase" data-tooltip="Paraphrased by ChatGPT on 2023-10-15">From personalized recommendations on streaming platforms to autonomous vehicles</span>,
+    AI systems are becoming increasingly integrated into society.
+</p>
+<style>
+.ai-paraphrase {
+    background-color: #e8f4fd;
+    border-left: 3px solid #3498db;
+    padding: 2px 4px;
+    position: relative;
+}
+
+.ai-paraphrase::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.ai-paraphrase:hover::after {
+    opacity: 1;
+}
+</style>
+```
+
+## Browser Extension (TODO)
+
+A browser extension for Google Docs and Overleaf will generate TWFF containers by monitoring edits and capturing AI interactions.
+
+## LMS Integration (TODO)
+
+Plugins for Canvas, Moodle, and other LMS platforms will accept TWFF submissions and display annotated views to instructors.
+
+## Roadmap
+
+|Phase |Components |Timeline|
+| ---| ---|--- |
+|v0.1 Core | Schema definition, reference implementation (Python), basic visualizer| Q1 2026 |
+|v1.0 Tools| Browser extension (Google Docs), improved visualizer, chat transcript | support Q2 2026|
+|v1.2 Integration| Canvas plugin, Moodle plugin, validator service| Q3 2026|
+|v1.5 Future | Cryptographic signatures, decentralized storage, multi-author support| Q4 2026+|
+
+### TODO
+
+- [x] Schema v1.0 definition
+
+- [ ] Reference implementation (Python / NiceGUI)
+
+- [ ] Browser extension for Google Docs / Overleaf
+
+- [ ] TWFF visualizer (like your HTML demo)
+
+- [ ] LMS integration (Canvas, Moodle)
