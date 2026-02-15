@@ -371,6 +371,6 @@ Plugins for Canvas, Moodle, and other LMS platforms will accept TWFF submissions
 
 - [ ] Browser extension for Google Docs / Overleaf
 
-- [ ] TWFF visualizer (like your HTML demo)
+- [ ] TWFF visualizer
 
 - [ ] LMS integration (Canvas, Moodle)
