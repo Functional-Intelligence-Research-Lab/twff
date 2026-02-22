@@ -1,1 +1,6 @@
-/glassbox/ANALYSIS.md
+# ignore .pyc
+*.pyc
+.*__pycache__*/
+.gitignore
+.DS_Store
+.cpython-*

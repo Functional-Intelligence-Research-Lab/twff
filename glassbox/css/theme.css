@@ -1,3 +1,31 @@
+/*
+ * Glass Box — Theme CSS
+ * ─
+ * Visual language: glass-auditable, warm-scholarly. "You can see through it."
+ *
+ * Accent: pastel blue (#3b82f6 / blue-500 family) — audit, transparency, trust.
+ * Ground: warm near-white — the desk surface beneath the paper.
+ * Dark chrome: near-black header and borders — precision instruments.
+ *
+ * Fonts:
+ *   UI / headings / chrome  → Atkinson Hyperlegible (accessibility-first sans)
+ *   Editor body / prose     → Crimson Text (et-book substitute, academic serif)
+ *   Code / mono             → JetBrains Mono
+ *
+ * Annotation colour system (single source — mirrors process_log.ANNOTATION_TYPES):
+ *   ai_paraphrase  → blue   (#3b82f6 tint)
+ *   ai_generated   → green  (#10b981 tint)
+ *   external_paste → amber  (#f59e0b tint)
+ *   ai_completion  → violet (#8b5cf6 tint)
+ *
+ * NiceGUI/Quasar note: many !important declarations are required to override
+ * Quasar's internal specificity. These are intentional, not lazy.
+ *
+ * Accessibility: WCAG AA on all text/bg pairs, focus-visible rings, reduced-motion.
+ * ─
+ */
+
+/*  Design Tokens (single :root block)  */
 :root {
   /* Ground / surface */
   --gb-ground:       #F4F3EF;   /* warm near-white matte — the desk */
@@ -61,7 +89,7 @@
   --nicegui-default-padding: 0px;
 }
 
-/* ── Reduced-motion ───────────────────────────────────────────────────── */
+/*  Reduced-motion ─ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration:       0.01ms !important;
@@ -70,7 +98,7 @@
   }
 }
 
-/* ── Reset ────────────────────────────────────────────────────────────── */
+/*  Reset  */
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
@@ -84,7 +112,9 @@ html, body {
   color:       var(--gb-ink);
 }
 
-/* ── Skip link ────────────────────────────────────────────────────────── */
+
+
+/*  Skip link  */
 .skip-link {
   position:    absolute;
   top:         -100%;
@@ -101,16 +131,16 @@ html, body {
 }
 .skip-link:focus { top: 0.5rem; }
 
-/* ── Global focus ring ────────────────────────────────────────────────── */
+/*  Global focus ring  */
 :focus-visible {
   outline:        2px solid var(--gb-accent) !important;
   outline-offset: 2px !important;
   border-radius:  2px !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    HEADER
-   ═══════════════════════════════════════════════════════════════════════ */
+    */
 .gb-header {
   background:   var(--gb-ink) !important;
   border-bottom: 2px solid var(--gb-accent) !important;
@@ -177,9 +207,9 @@ html, body {
 
 .gb-btn-primary.q-btn:hover { background: var(--gb-accent-dim) !important; }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    LEGEND BAR
-   ═══════════════════════════════════════════════════════════════════════ */
+    */
 .gb-legend {
   background:    var(--gb-surface-2) !important;
   border-bottom: 1px solid var(--gb-border-soft) !important;
@@ -223,9 +253,9 @@ html, body {
   white-space: nowrap !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    FOOTER / STATUS BAR
-   ═══════════════════════════════════════════════════════════════════════ */
+    */
 .gb-footer {
   background:   var(--gb-surface-2) !important;
   border-top:   1px solid var(--gb-border-soft) !important;
@@ -254,9 +284,9 @@ html, body {
   font-size: 0.63rem !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    EDITOR CONTAINER
-   ═══════════════════════════════════════════════════════════════════════ */
+    */
 .editor-container {
   display:        flex !important;
   flex-direction: column !important;
@@ -271,9 +301,9 @@ html, body {
   background: var(--gb-ground) !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    QUASAR EDITOR OVERRIDES
-   ═══════════════════════════════════════════════════════════════════════ */
+    */
 
 .q-editor {
   display:        flex !important;
@@ -284,7 +314,7 @@ html, body {
   border: none !important;
 }
 
-/* ── Toolbar ─────────────────────────────────────────────────────────── */
+/*  Toolbar ─ */
 .q-editor__toolbar {
   display:     flex !important;
   flex-wrap:   wrap !important;
@@ -347,6 +377,7 @@ html, body {
   padding:  0 8px !important;
   border:   1px solid var(--gb-border-soft) !important;
   color:    var(--gb-ink-mid) !important;
+  background:   transparent !important;
   transition: all var(--t-fast) !important;
 }
 
@@ -356,7 +387,7 @@ html, body {
   background:   var(--gb-accent-pale) !important;
 }
 
-/* Export button — accent filled */
+/* Export button — accent filled (deprecated, use .export-btn-pdf) */
 .export-btn.q-btn {
   background:  var(--gb-accent) !important;
   color:       #fff !important;
@@ -366,9 +397,10 @@ html, body {
 .export-btn.q-btn:hover {
   background:  var(--gb-accent-dim) !important;
   border-color: var(--gb-accent-dim) !important;
+  color:       #fff !important;
 }
 
-/* ── Editor paper ─────────────────────────────────────────────────────── */
+/*  Editor paper ─ */
 .q-editor__content {
   flex:      1 !important;
   overflow-y: auto !important;
@@ -392,7 +424,7 @@ html, body {
   position:    relative !important;
 }
 
-/* ── Editor typography ────────────────────────────────────────────────── */
+/*  Editor typography  */
 .q-editor p, .q-editor h1, .q-editor h2, .q-editor h3,
 .q-editor h4, .q-editor h5, .q-editor h6,
 .q-editor li, .q-editor blockquote, .q-editor pre {
@@ -517,9 +549,10 @@ html, body {
   border:    1px solid var(--gb-border-soft) !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    ANNOTATION SPANS — single definitions, no duplicates
-   ═══════════════════════════════════════════════════════════════════════ */
+   Colours mirror process_log.ANNOTATION_TYPES and SPEC.md §7
+    */
 
 .ann-paraphrase,
 .ann-generated,
@@ -579,9 +612,9 @@ html, body {
 
 [data-tooltip]:hover::after { opacity: 1 !important; }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    DIALOG
-   ═══════════════════════════════════════════════════════════════════════ */
+    */
 .post-export-dialog {
   border-radius: 0 !important;
   border:        2px solid var(--gb-ink) !important;
@@ -607,9 +640,9 @@ html, body {
   display:       block !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    SCROLLBARS
-   ═══════════════════════════════════════════════════════════════════════ */
+    */
 ::-webkit-scrollbar          { width: 7px; height: 7px; }
 ::-webkit-scrollbar-track    { background: var(--gb-ground); }
 ::-webkit-scrollbar-thumb    { background: var(--gb-border-mid); border-radius: 999px; }
@@ -625,9 +658,9 @@ html, body {
   width:         5px !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    RESPONSIVE
-   ═══════════════════════════════════════════════════════════════════════ */
+    */
 @media (max-width: 768px) {
   :root { --editor-padding: var(--editor-padding-sm); }
 
@@ -655,9 +688,9 @@ html, body {
   .gb-brand-sub { display: none !important; }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
+/*
    PRINT
-   ═══════════════════════════════════════════════════════════════════════ */
+    */
 @media print {
   .gb-header, .gb-legend, .gb-footer,
   .q-editor__toolbar { display: none !important; }
@@ -669,4 +702,246 @@ html, body {
     margin:     0 !important;
     padding:    0 !important;
   }
+}
+
+/*
+   ADDITIONS — v0.2 features
+   Ghost completion, Command palette, Ollama status, model selector,
+   header secondary button, footer kbd hint
+    */
+
+/*  Ghost completion span  */
+#gb-ghost {
+  color:           var(--gb-ink-faint) !important;
+  font-style:      italic !important;
+  pointer-events:  none !important;
+  user-select:     none !important;
+  border-bottom:   1px dashed var(--gb-border-mid) !important;
+}
+
+/*  Ollama status indicator  */
+.ollama-status {
+  font-family:    var(--font-mono) !important;
+  font-size:      0.65rem !important;
+  font-weight:    500 !important;
+  white-space:    nowrap !important;
+  padding:        2px 7px !important;
+  border-radius:  0 !important;
+}
+
+.ollama-online {
+  color:      #4ade80 !important;
+  background: rgba(74,222,128,0.10) !important;
+  border:     1px solid rgba(74,222,128,0.25) !important;
+}
+
+.ollama-offline {
+  color:      var(--gb-ink-faint) !important;
+  background: rgba(255,255,255,0.04) !important;
+  border:     1px solid rgba(255,255,255,0.08) !important;
+}
+
+/*  Model selector ─ */
+.model-select .q-field__native,
+.model-select .q-field__control {
+  font-family:  var(--font-mono) !important;
+  font-size:    0.65rem !important;
+  color:        var(--gb-ink-faint) !important;
+  min-height:   24px !important;
+  height:       24px !important;
+  padding:      0 4px !important;
+}
+
+.model-select .q-field__control { background: transparent !important; }
+
+/*  Header icon button ─ */
+.gb-icon-btn.q-btn {
+  color:        var(--gb-ink-faint) !important;
+  min-width:    28px !important;
+  min-height:   28px !important;
+  border-radius: 0 !important;
+  transition:   color var(--t-fast), background var(--t-fast) !important;
+}
+.gb-icon-btn.q-btn:hover {
+  color:      var(--gb-accent) !important;
+  background: rgba(59,130,246,0.08) !important;
+}
+
+/*  Secondary header button (Export .twff) ─ */
+.gb-btn-secondary.q-btn {
+  background:     transparent !important;
+  color:          var(--gb-ink-faint) !important;
+  border:         1px solid rgba(255,255,255,0.12) !important;
+  border-radius:  0 !important;
+  font-family:    var(--font-ui) !important;
+  font-size:      0.7rem !important;
+  font-weight:    600 !important;
+  padding:        0 0.7rem !important;
+  height:         26px !important;
+  transition:     all var(--t-fast) !important;
+}
+.gb-btn-secondary.q-btn:hover {
+  color:        #fff !important;
+  border-color: rgba(255,255,255,0.3) !important;
+}
+
+/*  Footer keyboard hint ─ */
+.gb-kbd-hint {
+  font-family:    var(--font-mono) !important;
+  font-size:      0.6rem !important;
+  color:          var(--gb-ink-faint) !important;
+  background:     rgba(255,255,255,0.06) !important;
+  border:         1px solid rgba(255,255,255,0.1) !important;
+  padding:        1px 5px !important;
+  border-radius:  2px !important;
+}
+
+/*  Legend hint  */
+.gb-legend-hint {
+  font-family:  var(--font-ui) !important;
+  font-size:    0.6rem !important;
+  color:        var(--gb-ink-faint) !important;
+  font-style:   italic !important;
+  padding-right: 0.5rem !important;
+}
+
+/*
+   COMMAND PALETTE
+    */
+.cp-card {
+  width:         560px !important;
+  max-width:     92vw !important;
+  max-height:    70vh !important;
+  border-radius: 0 !important;
+  border:        2px solid var(--gb-ink) !important;
+  padding:       0 !important;
+  overflow:      hidden !important;
+  box-shadow:    0 24px 48px rgba(26,25,23,0.18) !important;
+}
+
+.cp-search-row {
+  padding:     10px 14px !important;
+  background:  var(--gb-surface) !important;
+}
+
+.cp-search-icon {
+  color: var(--gb-ink-soft) !important;
+}
+
+.cp-search-input .q-field__native,
+.cp-search-input input {
+  font-family:  var(--font-ui) !important;
+  font-size:    0.9rem !important;
+  color:        var(--gb-ink) !important;
+  caret-color:  var(--gb-accent) !important;
+}
+
+.cp-results {
+  overflow-y:   auto !important;
+  max-height:   calc(70vh - 56px) !important;
+  padding:      4px 0 8px 0 !important;
+  background:   var(--gb-surface) !important;
+}
+
+.cp-group-label {
+  font-family:    var(--font-ui) !important;
+  font-size:      0.58rem !important;
+  font-weight:    700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.12em !important;
+  color:          var(--gb-ink-faint) !important;
+  padding:        8px 14px 4px 14px !important;
+}
+
+.cp-cmd-row {
+  padding:    6px 14px !important;
+  transition: background var(--t-fast) !important;
+  gap:        10px !important;
+}
+.cp-cmd-row:hover {
+  background: var(--gb-accent-pale) !important;
+}
+
+.cp-cmd-icon { color: var(--gb-ink-soft) !important; flex-shrink: 0 !important; }
+
+.cp-cmd-label {
+  font-family: var(--font-ui) !important;
+  font-size:   0.82rem !important;
+  color:       var(--gb-ink) !important;
+}
+
+.cp-cmd-shortcut {
+  font-family:  var(--font-mono) !important;
+  font-size:    0.62rem !important;
+  color:        var(--gb-ink-faint) !important;
+  background:   var(--gb-ground) !important;
+  border:       1px solid var(--gb-border-soft) !important;
+  padding:      1px 5px !important;
+  border-radius: 2px !important;
+  white-space:  nowrap !important;
+}
+
+.cp-empty {
+  font-family: var(--font-ui) !important;
+  font-size:   0.8rem !important;
+  color:       var(--gb-ink-faint) !important;
+  padding:     16px 14px !important;
+  font-style:  italic !important;
+}
+
+/*
+   PDF EXPORT BUTTON VARIANTS IN TOOLBAR
+    */
+.export-btn-twff.q-btn {
+  background:  transparent !important;
+  color:       var(--gb-ink-mid) !important;
+  border:      1px solid var(--gb-border-soft) !important;
+  border-radius: 0 !important;
+  font-size:   0.68rem !important;
+  font-weight: 700 !important;
+  height:      24px !important;
+  padding:     0 8px !important;
+}
+.export-btn-twff.q-btn:hover {
+  border-color: var(--gb-ink) !important;
+  color:        var(--gb-ink) !important;
+}
+
+.export-btn-pdf.q-btn {
+  background:  var(--gb-accent) !important;
+  color:       #fff !important;
+  border:      1px solid var(--gb-accent) !important;
+  border-radius: 0 !important;
+  font-size:   0.68rem !important;
+  font-weight: 700 !important;
+  height:      24px !important;
+  padding:     0 8px !important;
+}
+.export-btn-pdf.q-btn:hover { background: var(--gb-accent-dim) !important; }
+
+/*
+   POST-EXPORT / DIALOG COMMON
+    */
+.post-export-dialog {
+  border-radius: 0 !important;
+  border:        2px solid var(--gb-ink) !important;
+  padding:       1.5rem !important;
+  max-width:     480px !important;
+  width:         92vw !important;
+}
+.dialog-title {
+  font-family:    var(--font-ui) !important;
+  font-size:      1rem !important;
+  font-weight:    700 !important;
+  letter-spacing: -0.02em !important;
+  color:          var(--gb-ink) !important;
+  display:        block !important;
+  margin-bottom:  0.2rem !important;
+}
+.dialog-meta {
+  font-family:   var(--font-mono) !important;
+  font-size:     0.68rem !important;
+  color:         var(--gb-ink-soft) !important;
+  display:       block !important;
+  margin-bottom: 1rem !important;
 }

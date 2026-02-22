@@ -11,8 +11,8 @@ import json
 import uuid
 import zipfile
 
-# Annotation type registry
-# Drives: CSS class names, legend labels, log event types.
+#  Annotation type registry
+# Single source of truth. Drives: CSS class names, legend labels, log event types.
 ANNOTATION_TYPES = {
     "ai_paraphrase": {
         "css_class":   "ann-paraphrase",
@@ -66,7 +66,7 @@ class ProcessLog:
 
         self.log_event("session_start")
 
-    # Public API
+    #  Public API
 
     def log_event(self, event_type: str, meta: dict | None = None) -> dict:
         """
@@ -183,7 +183,7 @@ class ProcessLog:
         buf.seek(0)
         return buf.getvalue()
 
-    # Private helpers
+    #  Private helpers ─
 
     @staticmethod
     def _generate_ephemeral_id() -> str:
