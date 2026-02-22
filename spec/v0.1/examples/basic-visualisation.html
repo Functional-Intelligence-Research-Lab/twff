@@ -1,140 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>TWFF Visualisation: Wind Energy Essay</title>
-    <style>
-        /* Include the same CSS as in content/css/style.css */
-        .ai-paraphrase {
-            background-color: #e8f4fd;
-            border-left: 3px solid #3498db;
-            padding: 2px 4px;
-            position: relative;
-        }
-        .ai-generated {
-            background-color: #e8f6f3;
-            border-left: 3px solid #1abc9c;
-            padding: 2px 4px;
-            position: relative;
-        }
-        .external-source {
-            background-color: #fef9e7;
-            border-left: 3px solid #f1c40f;
-            padding: 2px 4px;
-            position: relative;
-        }
-        .ai-paraphrase::after,
-        .ai-generated::after,
-        .external-source::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 0;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-            z-index: 10;
-        }
-        .ai-paraphrase:hover::after,
-        .ai-generated:hover::after,
-        .external-source:hover::after {
-            opacity: 1;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            color: #333;
-            background-color: #f9f9f9;
-        }
-        .document-container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        .document-title {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-        .legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin: 20px 0;
-            justify-content: center;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .color-box {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
-            border-radius: 3px;
-        }
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #7f8c8d;
-            font-size: 0.9em;
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TWFF Basic Example — Glass Box Visualisation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── Tokens ─────────────────────────────────────────────────── */
+    :root {
+      --ground:        #F4F3EF;
+      --surface:       #FFFFFF;
+      --ink:           #1A1917;
+      --ink-mid:       #3D3B37;
+      --ink-soft:      #7A7872;
+      --ink-faint:     #B3B0A9;
+      --border-soft:   #E0DED8;
+      --accent:        #3b82f6;   /* pastel blue — primary brand in visualiser */
+      --accent-dim:    #2563eb;
+
+      --ann-para-bg:   rgba(59,130,246,0.10);
+      --ann-para-bar:  #3b82f6;
+      --ann-gen-bg:    rgba(16,185,129,0.10);
+      --ann-gen-bar:   #10b981;
+      --ann-ext-bg:    rgba(245,158,11,0.12);
+      --ann-ext-bar:   #f59e0b;
+      --ann-comp-bg:   rgba(139,92,246,0.10);
+      --ann-comp-bar:  #8b5cf6;
+
+      --font-ui:   'Atkinson Hyperlegible', system-ui, sans-serif;
+      --font-body: 'Crimson Text', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Reset ────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      font-family: var(--font-ui);
+      background: var(--ground);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────── */
+    header {
+      background: var(--ink);
+      border-bottom: 2px solid var(--accent);
+      padding: 0 2rem;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .brand-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+    }
+
+    .brand-sep { color: #444; font-size: 0.75rem; }
+
+    .brand-doc {
+      font-size: 0.75rem;
+      color: #888;
+      font-family: var(--font-mono);
+    }
+
+    .header-badge {
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: var(--accent);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────────── */
+    .page {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 0;
+      min-height: calc(100vh - 48px);
+    }
+
+    /* ── Document panel ───────────────────────────────────────────── */
+    .document-panel {
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .document-paper {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--surface);
+      padding: 3rem 4rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 2px 16px rgba(26,25,23,0.06);
+    }
+
+    .document-paper h1 {
+      font-family: var(--font-ui);
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin: 0 0 1.25rem 0;
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 0.4rem;
+    }
+
+    .document-paper p {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.85;
+      margin: 0.9em 0;
+      color: var(--ink);
+    }
+
+    /* ── Annotation spans ─────────────────────────────────────────── */
+    [class^="ann-"] {
+      position: relative;
+      cursor: help;
+      padding: 0.05em 0.2em 0.05em 0.45em;
+    }
+
+    .ann-paraphrase { background: var(--ann-para-bg); border-left: 3px solid var(--ann-para-bar); }
+    .ann-generated  { background: var(--ann-gen-bg);  border-left: 3px solid var(--ann-gen-bar); }
+    .ann-external   { background: var(--ann-ext-bg);  border-left: 3px solid var(--ann-ext-bar); }
+    .ann-completion { background: var(--ann-comp-bg); border-bottom: 2px dashed var(--ann-comp-bar); }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 5px);
+      left: 0;
+      background: var(--ink);
+      color: #a8c4f0;
+      font-family: var(--font-ui);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      padding: 3px 9px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.12s ease;
+      z-index: 100;
+    }
+    [data-tooltip]:hover::after { opacity: 1; }
+
+    /* ── Sidebar ──────────────────────────────────────────────────── */
+    .sidebar {
+      background: var(--surface);
+      border-left: 1px solid var(--border-soft);
+      padding: 1.5rem;
+      overflow-y: auto;
+      font-size: 0.75rem;
+    }
+
+    .sidebar-section { margin-bottom: 2rem; }
+
+    .sidebar-title {
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-soft);
+      margin: 0 0 0.75rem 0;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    /* Legend */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      flex-shrink: 0;
+    }
+    .legend-label { color: var(--ink-mid); font-size: 0.72rem; }
+
+    /* Event log */
+    .event-list { list-style: none; margin: 0; padding: 0; }
+
+    .event-item {
+      border-left: 2px solid var(--border-soft);
+      padding: 0.4rem 0 0.4rem 0.75rem;
+      margin-bottom: 0.35rem;
+      position: relative;
+    }
+    .event-item::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      background: var(--border-soft);
+      border-radius: 50%;
+    }
+
+    .event-item.type-session_start::before,
+    .event-item.type-session_end::before  { background: var(--accent); }
+    .event-item.type-ai_interaction::before { background: var(--ann-para-bar); }
+    .event-item.type-paste::before        { background: var(--ann-ext-bar); }
+    .event-item.type-edit::before         { background: var(--ink-faint); }
+    .event-item.type-checkpoint::before   { background: var(--ann-comp-bar); }
+
+    .event-type {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--ink-mid);
+    }
+
+    .event-time {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--ink-faint);
+      margin-top: 1px;
+    }
+
+    .event-meta {
+      font-size: 0.65rem;
+      color: var(--ink-soft);
+      margin-top: 2px;
+      font-family: var(--font-ui);
+    }
+
+    /* Stats */
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .stat-label { color: var(--ink-soft); font-size: 0.7rem; }
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    /* Session ID */
+    .session-id {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--ink-faint);
+      word-break: break-all;
+      margin-top: 0.25rem;
+    }
+
+    /* Integrity badge */
+    .integrity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(16,185,129,0.10);
+      border: 1px solid rgba(16,185,129,0.25);
+      color: #059669;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .page { grid-template-columns: 1fr; }
+      .sidebar { border-left: none; border-top: 1px solid var(--border-soft); }
+      .document-paper { padding: 1.5rem; }
+    }
+  </style>
 </head>
 <body>
-    <div class="document-container">
-        <h2 class="document-title">Harnessing the Wind: A Path to Sustainability</h2>
 
-        <div class="legend">
-            <div class="legend-item">
-                <div class="color-box" style="background-color: #e8f4fd; border-left: 3px solid #3498db;"></div>
-                <span>AI Paraphrased Content</span>
-            </div>
-            <div class="legend-item">
-                <div class="color-box" style="background-color: #e8f6f3; border-left: 3px solid #1abc9c;"></div>
-                <span>AI Generated Content</span>
-            </div>
-            <div class="legend-item">
-                <div class="color-box" style="background-color: #fef9e7; border-left: 3px solid #f1c40f;"></div>
-                <span>External Source Content</span>
-            </div>
-        </div>
+<header>
+  <div class="brand">
+    <span class="brand-name">Glass Box</span>
+    <span class="brand-sep">·</span>
+    <span class="brand-doc">basic-example.twff</span>
+  </div>
+  <span class="header-badge">TWFF v0.1 Visualisation</span>
+</header>
 
-        <p>
-            Wind energy has emerged as one of the most promising renewable sources.
-            <span class="ai-paraphrase" data-tooltip="Paraphrased by integrated-Gemma2 on 2026-02-15 (from a pasted draft)">
-                Global wind energy capacity has been observed to double approximately every three years
-            </span>,
-            it now powers millions of homes. However, challenges such as intermittency
-            and land use remain.
-        </p>
+<div class="page">
 
-        <p>
-            <span class="ai-generated" data-tooltip="Drafted by integrated-Gemma2 on 2026-02-15">
-                Innovations in turbine design and energy storage are addressing these issues.
-            </span>
-            For instance,
-            <span class="external-source" data-tooltip="Pasted from a research article on 2026-02-15">
-                floating offshore turbines can access stronger winds without visual pollution.
-            </span>
-            Meanwhile, AI‑driven predictive maintenance reduces downtime and costs.
-        </p>
+  <!-- ── Document ─────────────────────────────────────────────────── -->
+  <main class="document-panel">
+    <article class="document-paper">
+
+      <h1>The Role of AI in Modern Education</h1>
+
+      <p>Artificial intelligence is increasingly present in educational settings, from automated
+      grading tools to AI writing assistants available to students at every level. This has created
+      a genuine challenge for educators: how to assess student effort and understanding in an
+      environment where AI can produce competent text on demand.</p>
+
+      <p>The most common institutional response has been to deploy AI detection software.
+      <span class="ann-external"
+            data-tooltip="External paste — 2026-02-16T09:05:20Z · 142 chars">
+        The rapid advancement of artificial intelligence has transformed many aspects of our
+        daily lives, and education is no exception to this trend.
+      </span>
+      However, the reliability of these tools has been questioned by multiple independent studies.</p>
+
+      <p><span class="ann-paraphrase"
+               data-tooltip="Paraphrased by gpt-4o — 2026-02-16T09:10:45Z · partially_accepted">
+        Subsequently, the implementation of neural architectures trained on large text corpora
+        has demonstrated a systematic tendency to misclassify writing produced by non-native
+        English speakers as machine-generated, owing to distributional differences in syntactic
+        patterns and lexical choices that diverge from native-speaker norms present in training data.
+      </span></p>
+
+      <p>A more productive approach would shift the question entirely. Rather than asking whether
+      a piece of text was produced by a human or a machine, we might instead ask whether we can
+      verify the process by which the text was created. This is the principle behind TWFF.</p>
+
+    </article>
+  </main>
+
+  <!-- ── Sidebar ───────────────────────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <!-- Legend -->
+    <div class="sidebar-section">
+      <p class="sidebar-title">Annotation Legend</p>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#3b82f6"></span>
+        <span class="legend-label">AI Paraphrase</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#10b981"></span>
+        <span class="legend-label">AI Generated</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#f59e0b"></span>
+        <span class="legend-label">External Source</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:#8b5cf6"></span>
+        <span class="legend-label">AI Completion</span>
+      </div>
     </div>
 
-    <footer>
-        <p>Generated from <code>basic.twff</code> • Tracked Writing File Format v0.1</p>
-    </footer>
+    <!-- Session stats -->
+    <div class="sidebar-section">
+      <p class="sidebar-title">Session</p>
+      <div class="stat-row">
+        <span class="stat-label">Duration</span>
+        <span class="stat-value">47 min</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Events</span>
+        <span class="stat-value">8</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Words</span>
+        <span class="stat-value">162</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">AI interactions</span>
+        <span class="stat-value">1</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">External pastes</span>
+        <span class="stat-value">1</span>
+      </div>
+      <p class="session-id">3f2a1b4c-8e9d-4f7a-b2c1-1a2b3c4d5e6f</p>
+      <div class="integrity-badge">✓ Integrity verified</div>
+    </div>
+
+    <!-- Event log -->
+    <div class="sidebar-section">
+      <p class="sidebar-title">Process Log</p>
+      <ul class="event-list">
+        <li class="event-item type-session_start">
+          <div class="event-type">session_start</div>
+          <div class="event-time">09:00:01Z</div>
+        </li>
+        <li class="event-item type-edit">
+          <div class="event-type">edit</div>
+          <div class="event-time">09:01:15Z</div>
+          <div class="event-meta">0–280 · human</div>
+        </li>
+        <li class="event-item type-paste">
+          <div class="event-type">paste</div>
+          <div class="event-time">09:05:20Z</div>
+          <div class="event-meta">142 chars · external</div>
+        </li>
+        <li class="event-item type-ai_interaction">
+          <div class="event-type">ai_interaction</div>
+          <div class="event-time">09:10:45Z</div>
+          <div class="event-meta">paraphrase · gpt-4o</div>
+        </li>
+        <li class="event-item type-edit">
+          <div class="event-type">edit</div>
+          <div class="event-time">09:15:00Z</div>
+          <div class="event-meta">742–980 · human</div>
+        </li>
+        <li class="event-item type-checkpoint">
+          <div class="event-type">checkpoint</div>
+          <div class="event-time">09:30:00Z</div>
+          <div class="event-meta">980 chars · 162 words</div>
+        </li>
+        <li class="event-item type-session_end">
+          <div class="event-type">session_end</div>
+          <div class="event-time">09:47:22Z</div>
+        </li>
+      </ul>
+    </div>
+
+  </aside>
+</div>
+
 </body>
 </html>

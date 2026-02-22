@@ -1,0 +1,672 @@
+:root {
+  /* Ground / surface */
+  --gb-ground:       #F4F3EF;   /* warm near-white matte — the desk */
+  --gb-surface:      #FFFFFF;   /* editor paper */
+  --gb-surface-2:    #F9F8F5;   /* legend / sidebar stripe */
+
+  /* Ink */
+  --gb-ink:          #1A1917;
+  --gb-ink-mid:      #3D3B37;
+  --gb-ink-soft:     #7A7872;
+  --gb-ink-faint:    #B3B0A9;
+
+  /* Primary accent — pastel blue (trust, transparency, audit) */
+  --gb-accent:       #3b82f6;   /* blue-500 */
+  --gb-accent-dim:   #2563eb;   /* blue-600 — hover / active */
+  --gb-accent-pale:  #eff6ff;   /* blue-50  — ghost fills */
+  --gb-accent-mid:   #bfdbfe;   /* blue-200 — borders on accent surfaces */
+  --gb-accent-text:  #1e40af;   /* blue-800 — text on pale surfaces, AA */
+
+  /* Chrome / borders */
+  --gb-border:       #1A1917;   /* near-black sharp border */
+  --gb-border-soft:  #E0DED8;
+  --gb-border-mid:   #C8C5BE;
+
+  /* Status */
+  --gb-recording:    #ef4444;   /* red dot */
+  --gb-ok:           #10b981;   /* verified green */
+
+  /* Annotation tints (AA on white) */
+  --ann-para-bg:   rgba(59, 130, 246, 0.09);
+  --ann-para-bar:  #3b82f6;
+  --ann-gen-bg:    rgba(16, 185, 129, 0.09);
+  --ann-gen-bar:   #10b981;
+  --ann-ext-bg:    rgba(245, 158, 11, 0.10);
+  --ann-ext-bar:   #f59e0b;
+  --ann-comp-bg:   rgba(139, 92, 246, 0.09);
+  --ann-comp-bar:  #8b5cf6;
+
+  /* Typography */
+  --font-ui:   'Atkinson Hyperlegible', system-ui, sans-serif;
+  --font-body: 'Crimson Text', 'Georgia', 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* Editor geometry */
+  --editor-max-width:  8.5in;
+  --editor-padding:    72px;
+  --editor-padding-sm: 32px;
+
+  /* Chrome heights — used in calc() */
+  --header-height:  48px;
+  --legend-height:  36px;
+  --footer-height:  28px;
+  --toolbar-height: 44px;
+
+  /* Transitions */
+  --t-fast: 120ms ease;
+  --t-base: 200ms ease;
+
+  /* NiceGUI reset */
+  --nicegui-default-gap:     0px;
+  --nicegui-default-padding: 0px;
+}
+
+/* ── Reduced-motion ───────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:       0.01ms !important;
+    transition-duration:      0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ── Reset ────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height:   100vh;
+  width:    100vw;
+  overflow: hidden;
+  margin:   0;
+  padding:  0;
+  font-family: var(--font-ui);
+  background:  var(--gb-ground);
+  color:       var(--gb-ink);
+}
+
+/* ── Skip link ────────────────────────────────────────────────────────── */
+.skip-link {
+  position:    absolute;
+  top:         -100%;
+  left:        1rem;
+  background:  var(--gb-accent);
+  color:       #fff;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size:   0.8rem;
+  padding:     0.4em 0.8em;
+  text-decoration: none;
+  z-index:     9999;
+  transition:  top var(--t-fast);
+}
+.skip-link:focus { top: 0.5rem; }
+
+/* ── Global focus ring ────────────────────────────────────────────────── */
+:focus-visible {
+  outline:        2px solid var(--gb-accent) !important;
+  outline-offset: 2px !important;
+  border-radius:  2px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════════════════════════ */
+.gb-header {
+  background:   var(--gb-ink) !important;
+  border-bottom: 2px solid var(--gb-accent) !important;
+  height:     var(--header-height) !important;
+  min-height: var(--header-height) !important;
+  max-height: var(--header-height) !important;
+  display:    flex !important;
+  align-items: center !important;
+  padding:    0 1rem !important;
+}
+
+.gb-brand-name {
+  font-family:    var(--font-ui) !important;
+  font-size:      0.9rem !important;
+  font-weight:    700 !important;
+  letter-spacing: -0.02em !important;
+  color:          var(--gb-accent) !important;
+  line-height:    1.1 !important;
+}
+
+.gb-brand-sub {
+  font-family:    var(--font-ui) !important;
+  font-size:      0.6rem !important;
+  font-weight:    400 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color:          var(--gb-ink-soft) !important;
+  line-height:    1 !important;
+}
+
+/* Recording indicator */
+.gb-recording-dot {
+  color: var(--gb-recording) !important;
+  font-size: 0.5rem !important;
+  animation: gb-pulse 1.8s ease-in-out infinite !important;
+}
+
+@keyframes gb-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+
+.gb-event-count {
+  font-family: var(--font-mono) !important;
+  font-size:   0.68rem !important;
+  color:       var(--gb-ink-soft) !important;
+}
+
+/* Primary button in header */
+.gb-btn-primary.q-btn {
+  background:     var(--gb-accent) !important;
+  color:          #fff !important;
+  border-radius:  0 !important;
+  font-family:    var(--font-ui) !important;
+  font-size:      0.72rem !important;
+  font-weight:    700 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  padding:        0 0.85rem !important;
+  height:         28px !important;
+  border:         none !important;
+  transition:     background var(--t-fast) !important;
+}
+
+.gb-btn-primary.q-btn:hover { background: var(--gb-accent-dim) !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   LEGEND BAR
+   ═══════════════════════════════════════════════════════════════════════ */
+.gb-legend {
+  background:    var(--gb-surface-2) !important;
+  border-bottom: 1px solid var(--gb-border-soft) !important;
+  height:     var(--legend-height) !important;
+  min-height: var(--legend-height) !important;
+  max-height: var(--legend-height) !important;
+  display:    flex !important;
+  align-items: center !important;
+  gap:        1rem !important;
+  padding:    0 1rem !important;
+  overflow-x: auto !important;
+}
+
+.gb-legend-title {
+  font-family:    var(--font-ui) !important;
+  font-size:      0.62rem !important;
+  font-weight:    700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  color:          var(--gb-ink-soft) !important;
+  white-space:    nowrap !important;
+}
+
+.gb-legend-swatch {
+  display:     inline-block !important;
+  width:       0.65rem !important;
+  height:      0.65rem !important;
+  border-radius: 50% !important;  /* pill — softer than sharp in this palette */
+}
+
+/* Swatch colours match annotation bar colours */
+.ann-paraphrase-swatch { background: var(--ann-para-bar) !important; }
+.ann-generated-swatch  { background: var(--ann-gen-bar)  !important; }
+.ann-external-swatch   { background: var(--ann-ext-bar)  !important; }
+.ann-completion-swatch { background: var(--ann-comp-bar) !important; }
+
+.gb-legend-label {
+  font-family: var(--font-ui) !important;
+  font-size:   0.7rem !important;
+  color:       var(--gb-ink-mid) !important;
+  white-space: nowrap !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FOOTER / STATUS BAR
+   ═══════════════════════════════════════════════════════════════════════ */
+.gb-footer {
+  background:   var(--gb-surface-2) !important;
+  border-top:   1px solid var(--gb-border-soft) !important;
+  height:     var(--footer-height) !important;
+  min-height: var(--footer-height) !important;
+  max-height: var(--footer-height) !important;
+  display:    flex !important;
+  align-items: center !important;
+  padding:    0 0.75rem !important;
+}
+
+.gb-footer-text {
+  font-family: var(--font-ui) !important;
+  font-size:   0.63rem !important;
+  color:       var(--gb-ink-soft) !important;
+}
+
+.gb-footer-mono {
+  font-family: var(--font-mono) !important;
+  font-size:   0.63rem !important;
+  color:       var(--gb-ink-faint) !important;
+}
+
+.gb-footer-sep {
+  color:     var(--gb-ink-faint) !important;
+  font-size: 0.63rem !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   EDITOR CONTAINER
+   ═══════════════════════════════════════════════════════════════════════ */
+.editor-container {
+  display:        flex !important;
+  flex-direction: column !important;
+  height: calc(
+    100vh
+    - var(--header-height)
+    - var(--legend-height)
+    - var(--footer-height)
+  ) !important;
+  width:    100% !important;
+  overflow: hidden !important;
+  background: var(--gb-ground) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   QUASAR EDITOR OVERRIDES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.q-editor {
+  display:        flex !important;
+  flex-direction: column !important;
+  height:   100% !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────── */
+.q-editor__toolbar {
+  display:     flex !important;
+  flex-wrap:   wrap !important;
+  align-items: center !important;
+  height: auto !important;
+  min-height: var(--toolbar-height) !important;
+  background:    var(--gb-surface) !important;
+  border-bottom: 1px solid var(--gb-border-soft) !important;
+  padding: 4px 8px !important;
+  gap:     2px !important;
+  overflow: visible !important;
+}
+
+.q-editor__toolbar-group {
+  display:     flex !important;
+  align-items: center !important;
+  border-right:   1px solid var(--gb-border-soft) !important;
+  margin-right:   4px !important;
+  padding-right:  4px !important;
+}
+
+.q-editor__toolbar-group:last-child {
+  border-right:  none !important;
+  margin-right:  0 !important;
+  padding-right: 0 !important;
+}
+
+/* Standard toolbar buttons */
+.q-btn--editor {
+  min-width:    28px !important;
+  min-height:   28px !important;
+  max-height:   28px !important;
+  border-radius: 0 !important;
+  font-family: var(--font-ui) !important;
+  font-size:   0.7rem !important;
+  font-weight: 600 !important;
+  color:       var(--gb-ink-mid) !important;
+  padding:     0 6px !important;
+  transition:  background var(--t-fast), color var(--t-fast) !important;
+}
+
+.q-btn--editor:hover {
+  background: var(--gb-ground) !important;
+  color:      var(--gb-ink) !important;
+}
+
+.q-btn--editor.q-btn--active {
+  background: var(--gb-accent-pale) !important;
+  color:      var(--gb-accent-text) !important;
+  border-bottom: 2px solid var(--gb-accent) !important;
+}
+
+/* Annotation toolbar buttons */
+.ann-toolbar-btn.q-btn {
+  border-radius: 0 !important;
+  font-size:     0.68rem !important;
+  font-weight:   700 !important;
+  letter-spacing: 0.02em !important;
+  height:   24px !important;
+  padding:  0 8px !important;
+  border:   1px solid var(--gb-border-soft) !important;
+  color:    var(--gb-ink-mid) !important;
+  transition: all var(--t-fast) !important;
+}
+
+.ann-toolbar-btn.q-btn:hover {
+  border-color: var(--gb-accent) !important;
+  color:        var(--gb-accent-text) !important;
+  background:   var(--gb-accent-pale) !important;
+}
+
+/* Export button — accent filled */
+.export-btn.q-btn {
+  background:  var(--gb-accent) !important;
+  color:       #fff !important;
+  border-color: var(--gb-accent) !important;
+}
+
+.export-btn.q-btn:hover {
+  background:  var(--gb-accent-dim) !important;
+  border-color: var(--gb-accent-dim) !important;
+}
+
+/* ── Editor paper ─────────────────────────────────────────────────────── */
+.q-editor__content {
+  flex:      1 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  min-height: 0 !important;
+
+  max-width: var(--editor-max-width) !important;
+  width:     100% !important;
+  margin:    8px auto !important;
+  margin-bottom: calc(var(--footer-height) + 12px) !important;
+  padding:   var(--editor-padding) !important;
+  background: var(--gb-surface) !important;
+  border:    1px solid var(--gb-border-soft) !important;
+
+  box-shadow:
+    0 1px 0 var(--gb-border-soft),
+    0 2px 12px rgba(26, 25, 23, 0.05),
+    0 8px 32px rgba(26, 25, 23, 0.04) !important;
+
+  font-family: var(--font-body) !important;
+  position:    relative !important;
+}
+
+/* ── Editor typography ────────────────────────────────────────────────── */
+.q-editor p, .q-editor h1, .q-editor h2, .q-editor h3,
+.q-editor h4, .q-editor h5, .q-editor h6,
+.q-editor li, .q-editor blockquote, .q-editor pre {
+  word-wrap:     break-word !important;
+  overflow-wrap: break-word !important;
+  white-space:   normal !important;
+  max-width:     100% !important;
+}
+
+.q-editor p {
+  font-family: var(--font-body) !important;
+  font-size:   15px !important;
+  line-height: 1.85 !important;
+  margin:      0.85em 0 !important;
+  color:       var(--gb-ink) !important;
+  hyphens:     auto !important;
+}
+
+.q-editor h1 {
+  font-family:    var(--font-ui) !important;
+  font-size:      1.85em !important;
+  font-weight:    700 !important;
+  line-height:    1.2 !important;
+  letter-spacing: -0.03em !important;
+  color:          var(--gb-ink) !important;
+  margin:         1.25em 0 0.5em 0 !important;
+  border-bottom:  2px solid var(--gb-accent) !important;
+  padding-bottom: 0.2em !important;
+}
+
+.q-editor h2 {
+  font-family:    var(--font-ui) !important;
+  font-size:      1.35em !important;
+  font-weight:    700 !important;
+  line-height:    1.25 !important;
+  letter-spacing: -0.02em !important;
+  color:          var(--gb-ink) !important;
+  margin:         1em 0 0.4em 0 !important;
+}
+
+.q-editor h3 {
+  font-family: var(--font-ui) !important;
+  font-size:   1.1em !important;
+  font-weight: 700 !important;
+  color:       var(--gb-ink) !important;
+  margin:      0.85em 0 0.35em 0 !important;
+}
+
+.q-editor blockquote {
+  font-family:  var(--font-body) !important;
+  font-style:   italic !important;
+  font-size:    15px !important;
+  border-left:  3px solid var(--gb-accent-mid) !important;
+  margin:       1.5em 0 !important;
+  padding:      0.25em 0 0.25em 1em !important;
+  color:        var(--gb-ink-mid) !important;
+  background:   var(--gb-accent-pale) !important;
+}
+
+.q-editor ul, .q-editor ol {
+  font-family: var(--font-body) !important;
+  margin:      0.8em 0 0.8em 1.5em !important;
+  padding:     0 !important;
+}
+
+.q-editor li {
+  font-size:   15px !important;
+  line-height: 1.7 !important;
+  color:       var(--gb-ink) !important;
+  margin:      0.3em 0 !important;
+}
+
+.q-editor pre {
+  font-family: var(--font-mono) !important;
+  font-size:   13px !important;
+  background:  var(--gb-surface-2) !important;
+  border:      1px solid var(--gb-border-soft) !important;
+  border-left: 3px solid var(--gb-accent) !important;
+  padding:     0.85em 1em !important;
+  margin:      1.25em 0 !important;
+  overflow-x:  auto !important;
+}
+
+.q-editor code {
+  font-family: var(--font-mono) !important;
+  font-size:   0.85em !important;
+  background:  var(--gb-accent-pale) !important;
+  border:      1px solid var(--gb-accent-mid) !important;
+  color:       var(--gb-accent-text) !important;
+  padding:     0.1em 0.35em !important;
+}
+
+.q-editor table {
+  border-collapse: collapse !important;
+  width:    100% !important;
+  margin:   1.25em 0 !important;
+  border:   1px solid var(--gb-border-mid) !important;
+  font-size: 14px !important;
+  font-family: var(--font-body) !important;
+}
+
+.q-editor th, .q-editor td {
+  border:   1px solid var(--gb-border-mid) !important;
+  padding:  0.6em 0.85em !important;
+  text-align: left !important;
+}
+
+.q-editor th {
+  background:     var(--gb-accent-pale) !important;
+  font-family:    var(--font-ui) !important;
+  font-weight:    700 !important;
+  font-size:      0.78em !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color:          var(--gb-accent-text) !important;
+}
+
+.q-editor img {
+  max-width: 100% !important;
+  height:    auto !important;
+  margin:    1em 0 !important;
+  border:    1px solid var(--gb-border-soft) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ANNOTATION SPANS — single definitions, no duplicates
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ann-paraphrase,
+.ann-generated,
+.ann-external,
+.ann-completion {
+  position:        relative !important;
+  cursor:          help !important;
+  padding:         0.05em 0.2em 0.05em 0.45em !important;
+  text-decoration: underline dotted rgba(0,0,0,0.15) !important;
+  transition:      background var(--t-fast) !important;
+}
+
+.ann-paraphrase {
+  background:  var(--ann-para-bg) !important;
+  border-left: 3px solid var(--ann-para-bar) !important;
+}
+.ann-paraphrase:hover { background: rgba(59,130,246,0.17) !important; }
+
+.ann-generated {
+  background:  var(--ann-gen-bg) !important;
+  border-left: 3px solid var(--ann-gen-bar) !important;
+}
+.ann-generated:hover { background: rgba(16,185,129,0.17) !important; }
+
+.ann-external {
+  background:  var(--ann-ext-bg) !important;
+  border-left: 3px solid var(--ann-ext-bar) !important;
+}
+.ann-external:hover { background: rgba(245,158,11,0.18) !important; }
+
+.ann-completion {
+  background:    var(--ann-comp-bg) !important;
+  border-bottom: 2px dashed var(--ann-comp-bar) !important;
+  padding-left:  0.2em !important;
+}
+.ann-completion:hover { background: rgba(139,92,246,0.17) !important; }
+
+/* Tooltip (CSS-only, no JS) */
+[data-tooltip]::after {
+  content:       attr(data-tooltip) !important;
+  position:      absolute !important;
+  bottom:        calc(100% + 5px) !important;
+  left:          0 !important;
+  background:    var(--gb-ink) !important;
+  color:         #a8c4f0 !important;
+  font-family:   var(--font-ui) !important;
+  font-size:     0.62rem !important;
+  font-weight:   700 !important;
+  letter-spacing: 0.04em !important;
+  white-space:   nowrap !important;
+  padding:       3px 9px !important;
+  opacity:       0 !important;
+  pointer-events: none !important;
+  transition:    opacity var(--t-fast) !important;
+  z-index:       100 !important;
+}
+
+[data-tooltip]:hover::after { opacity: 1 !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DIALOG
+   ═══════════════════════════════════════════════════════════════════════ */
+.post-export-dialog {
+  border-radius: 0 !important;
+  border:        2px solid var(--gb-ink) !important;
+  padding:       1.5rem !important;
+  max-width:     480px !important;
+}
+
+.dialog-title {
+  font-family:    var(--font-ui) !important;
+  font-size:      1rem !important;
+  font-weight:    700 !important;
+  letter-spacing: -0.02em !important;
+  color:          var(--gb-ink) !important;
+  margin-bottom:  0.25rem !important;
+  display:        block !important;
+}
+
+.dialog-meta {
+  font-family:   var(--font-mono) !important;
+  font-size:     0.68rem !important;
+  color:         var(--gb-ink-soft) !important;
+  margin-bottom: 1rem !important;
+  display:       block !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCROLLBARS
+   ═══════════════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar          { width: 7px; height: 7px; }
+::-webkit-scrollbar-track    { background: var(--gb-ground); }
+::-webkit-scrollbar-thumb    { background: var(--gb-border-mid); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gb-ink-soft); }
+
+.q-editor__content::-webkit-scrollbar-thumb {
+  background: rgba(26,25,23,0.12) !important;
+}
+
+.q-scrollarea__thumb {
+  background:    var(--gb-border-mid) !important;
+  border-radius: 999px !important;
+  width:         5px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  :root { --editor-padding: var(--editor-padding-sm); }
+
+  .q-btn[aria-label="Subscript"],
+  .q-btn[aria-label="Superscript"],
+  .q-btn[aria-label="Heading 3"],
+  .q-btn[aria-label="Blockquote"],
+  .q-btn[aria-label="Code"] { display: none !important; }
+
+  .q-btn--editor {
+    min-width:  24px !important;
+    min-height: 24px !important;
+    font-size:  0.65rem !important;
+    padding:    0 3px !important;
+  }
+
+  .gb-legend { gap: 0.5rem !important; }
+}
+
+@media (max-width: 480px) {
+  .q-btn[aria-label="Strikethrough"],
+  .q-btn[aria-label="Ordered List"],
+  .q-btn[aria-label="Unordered List"] { display: none !important; }
+
+  .gb-brand-sub { display: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PRINT
+   ═══════════════════════════════════════════════════════════════════════ */
+@media print {
+  .gb-header, .gb-legend, .gb-footer,
+  .q-editor__toolbar { display: none !important; }
+
+  .q-editor__content {
+    box-shadow: none !important;
+    border:     none !important;
+    max-width:  100% !important;
+    margin:     0 !important;
+    padding:    0 !important;
+  }
+}
