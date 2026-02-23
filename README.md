@@ -1,7 +1,7 @@
 # Tracked Writing File Format (TWFF)
 
 <div align="center">
-  <img src="image.png" width="55%" alt="Visualization of a sample TWFF process log" />
+  <img src="image.png" width="40%" alt="Visualization of a sample TWFF process log" />
   <br/><br/>
   <strong>An open standard for Verifiable Effort in writing.</strong><br/>
   Moving past probabilistic AI detection toward deterministic process transparency.
