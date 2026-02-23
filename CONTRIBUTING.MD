@@ -21,26 +21,4 @@ twff/
 │   │   ├── README.md          # Version-specific spec
 │   │   ├── schema.json        # JSON Schema
 │   │   └── examples/
-│   │       ├── basic/
-│   │       │   ├── document.xhtml
-│   │       │   ├── process-log.json
-│   │       │   └── sample.twff
-│   │       └── full/
-│   │           ├── document.xhtml
-│   │           ├── process-log.json
-│   │           ├── chat-transcript.json
-│   │           └── full.twff
-├── implementations/
-│   ├── python/                # Reference implementation
-│   │   ├── README.md
-│   │   ├── src/
-│   │   └── tests/
-│   └── js/                    # {Java|Type}Script libraries (future)
-├── tools/
-│   ├── visualizer/             # Web-based TWFF viewer
-│   └── validator/              # TWFF validation tool
-└── docs/
-    ├── integration-guide.md    # LMS integration
-    ├── research-usage.md       # Guide for researchers
-    └── visualization.md        # How to build viewers
 ```
