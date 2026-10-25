@@ -109,7 +109,7 @@
           "description": "SHA-256 hash of this event. The previous-hash input is the session_id (chain root)."
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "session_end": {
@@ -133,7 +133,7 @@
           "description": "SHA-256 hash of this event, chained from the preceding event's _hash."
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "session_resume": {
@@ -157,7 +157,7 @@
           "description": "SHA-256 hash of this event, chained from the preceding event's _hash."
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "edit_block": {
@@ -218,7 +218,7 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "paste": {
@@ -265,7 +265,7 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "paste_link": {
@@ -306,7 +306,7 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "image_upload": {
@@ -342,7 +342,7 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "ai_interaction": {
@@ -423,6 +423,10 @@
             "interaction_subtype": {
               "enum": ["paraphrase", "grammar", "brainstorm", "other"],
               "description": "OPTIONAL. Which built-in quick action (if any) produced this interaction: 'paraphrase' (reword existing text), 'grammar' (fix grammar/style with minimal rewording), 'brainstorm' (organize/expand ideas), or 'other' (a free-form chat prompt not tied to a quick action). Supports Research Theme 1 (Provenance of Human-AI Knowledge Work) — without this, there's data on *that* AI was used but not *why* the author reached for it. Absent for producers that don't yet distinguish quick-action types."
+            },
+            "attribution_method": {
+              "enum": ["similarity_heuristic"],
+              "description": "OPTIONAL. Present only when this event's classification as an ai_interaction came from a text-similarity heuristic (a pasted or typed text matched a recently-produced AI output closely enough to be inferred as that output) rather than being directly observed (e.g. a real accept/insert click, or a native provider's own suggestion-acceptance signal). Its absence means directly observed. A confidence/provenance marker, not a judgment — lets analysis filter or flag lower-confidence inferred attributions separately rather than treating them as equal-confidence ground truth."
             }
           },
           "required": ["model", "output_preview", "position_start", "position_end", "acceptance"]
@@ -432,7 +436,7 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "ai_suggestion": {
@@ -513,7 +517,7 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "checkpoint": {
@@ -554,7 +558,7 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "focus_change": {
@@ -586,7 +590,7 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     },
 
     "chat_interaction": {
@@ -628,7 +632,7 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta"]
+      "required": ["type", "timestamp", "meta", "_hash"]
     }
 
   }
