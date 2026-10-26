@@ -256,6 +256,23 @@
               "type": "string",
               "maxLength": 100,
               "description": "First 100 characters of the pasted text, for audit and visualization purposes."
+            },
+            "source_tool": {
+              "type": "string",
+              "description": "OPTIONAL. Self-reported by the author at paste time or anytime afterward: which AI tool (if any) the pasted content came from. Self-reported, never detected — its absence means nothing was reported, not that the paste is confirmed human-authored."
+            },
+            "source_tool_history": {
+              "type": "array",
+              "description": "OPTIONAL. Present only when source_tool has been set more than once (a correction). Each entry records a prior or current value, in the order it was set, so a correction is recorded as data rather than silently overwriting the previous self-report with no trace it happened. source_tool always mirrors the most recent entry's value.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": { "type": "string" },
+                  "set_at": { "type": "string", "format": "date-time" },
+                  "via": { "type": "string", "description": "Which UI surface made this report, e.g. 'paste_prompt' or 'sidepanel'." }
+                },
+                "required": ["value", "set_at"]
+              }
             }
           },
           "required": ["source", "char_count", "position_start", "position_end"]
