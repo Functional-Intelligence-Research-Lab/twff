@@ -32,6 +32,17 @@ separate, conflicting sources.
 - **v0.3** — planned. Will adopt terms and vocabulary from the W3C Data Privacy Vocabularies
   Community Group (DPVCG) — e.g. mapping `user_id` to `dpv:pseudonymousID` — and will
   formally specify `chat_interaction` and `focus_change`, both marked RESERVED below.
+  **Proposed addition, not yet designed**: a general `actor` concept — *who* performed an
+  action, distinct from `purpose` (*why*, added in v0.2 for the single `study_stimulus_seed`
+  case) and from `source`/`source_tool` (*where the content came from*). A controlled-study
+  protocol only needed `purpose`; a broader `actor` would matter for multi-party sessions this
+  spec doesn't address yet — a teacher modeling an assignment before handing it to students, a
+  coding agent acting alongside a human in the same tracked session, or any session with more
+  than one real participant. Deliberately not built in v0.2: nothing in the current reference
+  protocol or implementation has a defined use for it, and this spec's own discipline is to
+  only add a field with a clear interpretive role behind it. Revisit when a real use case needs
+  it, not speculatively. Solving *automatic* actor detection for simultaneous or ambiguous
+  multi-actor sessions is a separate, harder problem this note doesn't attempt to scope.
 
 Breaking changes are issued under a new major/minor version number. Non-breaking additions
 (new optional fields, new event types) may be added with a patch increment.
@@ -196,6 +207,7 @@ records a per-keystroke timeline or raw keystroke content, regardless of `source
 | `content_before_length` | integer | OPTIONAL | True length of `content_before` before truncation. See §6.1. |
 | `content_after_length` | integer | OPTIONAL | True length of `content_after` before truncation. See §6.1. |
 | `delta_words` | integer | OPTIONAL | Net word-count change (negative = net deletion). |
+| `purpose` | string | OPTIONAL | Why this specific action happened, independent of its `source`. Currently defined: `study_stimulus_seed`. See below. |
 
 `source` values: `human` (directly typed), `ai` (content inserted by accepting an
 `ai_interaction`/`ai_suggestion` — the corresponding AI event MUST also be present),
@@ -218,6 +230,19 @@ use `paste_link` instead. For pasted image files, use `image_upload` instead.
 | `position_start` | integer | REQUIRED | Character offset where the paste begins. |
 | `position_end` | integer | REQUIRED | Character offset where the paste ends. |
 | `content_preview` | string | OPTIONAL | First 100 characters of the pasted text. |
+| `purpose` | string | OPTIONAL | Why this paste happened, independent of `source` or who performed it. Currently defined: `study_stimulus_seed` — see below. |
+
+**`purpose` field (OPTIONAL, on `paste` and its paired `edit_block`).** Answers "why did this
+happen," not "who did it" or "where did the content come from" — those are already covered by
+`source`/`source_tool`. The one value currently defined, `study_stimulus_seed`, marks a paste
+as a study-provided stimulus text being introduced into the document, regardless of who
+physically performed the paste. This distinction matters specifically because *who* pastes a
+study stimulus varies by delivery method — a facilitator pasting it in person, or a participant
+pasting it themselves after being sent the passage and instructed to record first — while *why*
+it was pasted stays the same either way. Like `source_tool`, this is a **self-report, not a
+verified fact**: its absence means nothing was flagged, not that the paste is confirmed to be
+ordinary content. Non-breaking addition — absent on every event recorded before this field
+existed, and on any event where it doesn't apply.
 
 #### `paste_link`
 Records the insertion of a hyperlink or URL reference — external web citations, or internal
@@ -284,8 +309,17 @@ triggered automatically by the system rather than explicitly requested. Also sup
 | `content_after_length` | integer | OPTIONAL | True length of `content_after` before truncation. See §6.1. |
 | `position_start` | integer | REQUIRED | Character offset where the suggestion was offered. |
 | `position_end` | integer | REQUIRED | Character offset of the end of the suggestion range. |
-| `acceptance` | string | REQUIRED | Author's response — same values as `ai_interaction` above. |
+| `acceptance` | string | REQUIRED | Author's response — `ai_interaction`'s four values, plus `pending` (see below). |
 | `similarity_score` | number | OPTIONAL | Same meaning as on `ai_interaction` — see §4.4. |
+
+**`pending`, an `ai_suggestion`-only `acceptance` value**: some implementations (e.g. inline
+chat assistants) log the passive `ai_suggestion` at the moment it's shown, before the author
+has responded, and record the real accept/reject outcome separately as a paired
+`ai_interaction` event once it resolves. `pending` marks that in-between state on the
+`ai_suggestion` itself. Consumers computing an acceptance rate MUST treat `pending` as "not yet
+resolved" — excluded from both accepted and rejected counts — and read the outcome from the
+paired `ai_interaction` instead, never from the still-`pending` `ai_suggestion`. Not a valid
+value for `ai_interaction`'s own `acceptance` field, which always records a resolved outcome.
 
 #### `chat_interaction` *(RESERVED — full specification planned for v0.3)*
 Records a multi-turn AI conversation conducted during writing (e.g. a side-panel chat

@@ -7,13 +7,15 @@
   "properties": {
     "version": {
       "type": "string",
-      "enum": ["0.2.0"],
+      "enum": [
+        "0.2.0"
+      ],
       "description": "TWFF specification version. Must be exactly '0.2.0' for this schema."
     },
     "session_id": {
       "type": "string",
       "format": "uuid",
-      "description": "Universally unique identifier for this writing session. Used as the salt for the hash chain root — all event hashes are ultimately anchored to this value."
+      "description": "Universally unique identifier for this writing session. Used as the salt for the hash chain root \u2014 all event hashes are ultimately anchored to this value."
     },
     "user_id": {
       "type": "string",
@@ -38,29 +40,55 @@
       "description": "Ordered, append-only list of writing process events. Events MUST appear in strict chronological order. Each event SHOULD include a _hash field forming a tamper-evident chain. The first event must be session_start; the last must be session_end.",
       "items": {
         "anyOf": [
-          { "$ref": "#/definitions/session_start" },
-          { "$ref": "#/definitions/session_end" },
-          { "$ref": "#/definitions/session_resume" },
-          { "$ref": "#/definitions/edit_block" },
-          { "$ref": "#/definitions/paste" },
-          { "$ref": "#/definitions/paste_link" },
-          { "$ref": "#/definitions/image_upload" },
-          { "$ref": "#/definitions/ai_interaction" },
-          { "$ref": "#/definitions/ai_suggestion" },
-          { "$ref": "#/definitions/checkpoint" },
-          { "$ref": "#/definitions/focus_change" },
-          { "$ref": "#/definitions/chat_interaction" }
+          {
+            "$ref": "#/definitions/session_start"
+          },
+          {
+            "$ref": "#/definitions/session_end"
+          },
+          {
+            "$ref": "#/definitions/session_resume"
+          },
+          {
+            "$ref": "#/definitions/edit_block"
+          },
+          {
+            "$ref": "#/definitions/paste"
+          },
+          {
+            "$ref": "#/definitions/paste_link"
+          },
+          {
+            "$ref": "#/definitions/image_upload"
+          },
+          {
+            "$ref": "#/definitions/ai_interaction"
+          },
+          {
+            "$ref": "#/definitions/ai_suggestion"
+          },
+          {
+            "$ref": "#/definitions/checkpoint"
+          },
+          {
+            "$ref": "#/definitions/focus_change"
+          },
+          {
+            "$ref": "#/definitions/chat_interaction"
+          }
         ]
       }
     },
     "_integrity": {
       "type": "object",
-      "description": "Root integrity block for tamper detection (spec §5.2/§5.3). Each event carries its own chained _hash; head_hash is the last event's _hash, so replaying the chain across all events in order and comparing against head_hash detects any post-hoc modification, reordering, insertion, or deletion.",
+      "description": "Root integrity block for tamper detection (spec \u00a75.2/\u00a75.3). Each event carries its own chained _hash; head_hash is the last event's _hash, so replaying the chain across all events in order and comparing against head_hash detects any post-hoc modification, reordering, insertion, or deletion.",
       "properties": {
         "algorithm": {
           "type": "string",
-          "enum": ["SHA-256-CHAIN"],
-          "description": "Hashing scheme used for the chain. Currently only SHA-256-CHAIN (per-event, spec §5.2) is supported."
+          "enum": [
+            "SHA-256-CHAIN"
+          ],
+          "description": "Hashing scheme used for the chain. Currently only SHA-256-CHAIN (per-event, spec \u00a75.2) is supported."
         },
         "chain_length": {
           "type": "integer",
@@ -70,7 +98,7 @@
         "head_hash": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$",
-          "description": "The last event's chained _hash — the terminal hash of the event chain. Verifiable by replaying the hash chain across all events in order (spec §5.2)."
+          "description": "The last event's chained _hash \u2014 the terminal hash of the event chain. Verifiable by replaying the hash chain across all events in order (spec \u00a75.2)."
         },
         "session_id": {
           "type": "string",
@@ -79,20 +107,36 @@
         },
         "note": {
           "type": "string",
-          "description": "Optional human-readable note (e.g. 'Partial session — application closed unexpectedly')."
+          "description": "Optional human-readable note (e.g. 'Partial session \u2014 application closed unexpectedly')."
         }
       },
-      "required": ["algorithm", "chain_length", "head_hash", "session_id"]
+      "required": [
+        "algorithm",
+        "chain_length",
+        "head_hash",
+        "session_id"
+      ]
     }
   },
-  "required": ["version", "session_id", "start_time", "end_time", "content_source", "events", "_integrity"],
+  "required": [
+    "version",
+    "session_id",
+    "start_time",
+    "end_time",
+    "content_source",
+    "events",
+    "_integrity"
+  ],
   "definitions": {
-
     "session_start": {
       "type": "object",
       "description": "Marks the beginning of a writing session. Must be the first event in the events array. For the hash chain, this event's _hash uses the session_id as its previous-hash input.",
       "properties": {
-        "type": { "enum": ["session_start"] },
+        "type": {
+          "enum": [
+            "session_start"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time",
@@ -109,14 +153,22 @@
           "description": "SHA-256 hash of this event. The previous-hash input is the session_id (chain root)."
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "session_end": {
       "type": "object",
       "description": "Marks the end of a writing session. Must be the last event in the events array.",
       "properties": {
-        "type": { "enum": ["session_end"] },
+        "type": {
+          "enum": [
+            "session_end"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time",
@@ -133,14 +185,22 @@
           "description": "SHA-256 hash of this event, chained from the preceding event's _hash."
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "session_resume": {
       "type": "object",
       "description": "Marks a previously-started session resuming after being paused (e.g. the author closed and reopened the document across multiple sittings). Not a session boundary the way session_start/session_end are; a single logical session MAY contain any number of these.",
       "properties": {
-        "type": { "enum": ["session_resume"] },
+        "type": {
+          "enum": [
+            "session_resume"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time",
@@ -157,14 +217,22 @@
           "description": "SHA-256 hash of this event, chained from the preceding event's _hash."
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "edit_block": {
       "type": "object",
-      "description": "Records a discrete edit to the document content. Implementations should aggregate rapid sequential keystrokes into a single block rather than recording per-keystroke. The meta.source field identifies the origin of the content — note that 'paste' is NOT a valid source here; pasted content should generate a separate paste event, and this edit_block's source should reflect what is known about that content's origin.",
+      "description": "Records a discrete edit to the document content. Implementations should aggregate rapid sequential keystrokes into a single block rather than recording per-keystroke. The meta.source field identifies the origin of the content \u2014 note that 'paste' is NOT a valid source here; pasted content should generate a separate paste event, and this edit_block's source should reflect what is known about that content's origin.",
       "properties": {
-        "type": { "enum": ["edit_block"] },
+        "type": {
+          "enum": [
+            "edit_block"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time"
@@ -173,8 +241,13 @@
           "type": "object",
           "properties": {
             "source": {
-              "enum": ["human", "ai", "external", "unknown"],
-              "description": "Origin of the edited content. 'human': directly typed by the author. 'ai': content inserted by accepting an ai_interaction or ai_suggestion — the corresponding AI event must also be present. 'external': content that originated from outside the document. 'unknown': source cannot be determined even in principle. Use 'external' in preference to 'unknown' wherever it is clear the content did not originate from the author's own typing.\n\nIMPORTANT — relationship with the paste event: when a clipboard paste occurs, implementations MUST emit a separate paste event to capture clipboard metadata (char_count, content_preview, etc.) AND an edit_block with source 'external' to record the content change in the edit stream. The edit_block is not a substitute for the paste event; both are required. The 'external' source on an edit_block therefore means: this content came from outside the document, and a corresponding paste, paste_link, or image_upload event will be present at the same timestamp. If no such event was captured — e.g. for bulk imports, drag-and-drop, or other non-clipboard mechanisms — 'external' still applies but no paired event is expected."
+              "enum": [
+                "human",
+                "ai",
+                "external",
+                "unknown"
+              ],
+              "description": "Origin of the edited content. 'human': directly typed by the author. 'ai': content inserted by accepting an ai_interaction or ai_suggestion \u2014 the corresponding AI event must also be present. 'external': content that originated from outside the document. 'unknown': source cannot be determined even in principle. Use 'external' in preference to 'unknown' wherever it is clear the content did not originate from the author's own typing.\n\nIMPORTANT \u2014 relationship with the paste event: when a clipboard paste occurs, implementations MUST emit a separate paste event to capture clipboard metadata (char_count, content_preview, etc.) AND an edit_block with source 'external' to record the content change in the edit stream. The edit_block is not a substitute for the paste event; both are required. The 'external' source on an edit_block therefore means: this content came from outside the document, and a corresponding paste, paste_link, or image_upload event will be present at the same timestamp. If no such event was captured \u2014 e.g. for bulk imports, drag-and-drop, or other non-clipboard mechanisms \u2014 'external' still applies but no paired event is expected."
             },
             "position_start": {
               "type": "integer",
@@ -199,33 +272,51 @@
             "content_before_length": {
               "type": "integer",
               "minimum": 0,
-              "description": "OPTIONAL. True length of content_before before truncation, in characters. Lets consumers classify position reliability and run drift correction accurately even when the edit is longer than the 500-character content cap — a plain integer carries no content, so it isn't subject to the cap itself. Fuzzy-match *location* confidence for the truncated portion of the text is still bounded by content_before's actual 500-character length; this field doesn't recover the missing text, only its true size."
+              "description": "OPTIONAL. True length of content_before before truncation, in characters. Lets consumers classify position reliability and run drift correction accurately even when the edit is longer than the 500-character content cap \u2014 a plain integer carries no content, so it isn't subject to the cap itself. Fuzzy-match *location* confidence for the truncated portion of the text is still bounded by content_before's actual 500-character length; this field doesn't recover the missing text, only its true size."
             },
             "content_after_length": {
               "type": "integer",
               "minimum": 0,
-              "description": "OPTIONAL. True length of content_after before truncation — see content_before_length."
+              "description": "OPTIONAL. True length of content_after before truncation \u2014 see content_before_length."
             },
             "delta_words": {
               "type": "integer",
               "description": "Net change in word count caused by this edit. Negative values indicate net deletion; positive values indicate net addition. Zero is valid for edits that replace content without changing word count."
+            },
+            "purpose": {
+              "enum": [
+                "study_stimulus_seed"
+              ],
+              "description": "OPTIONAL. Same meaning as paste.meta.purpose -- set on the paired edit_block (source: 'external') that accompanies a paste flagged this way, at the same timestamp."
             }
           },
-          "required": ["source", "position_start", "position_end"]
+          "required": [
+            "source",
+            "position_start",
+            "position_end"
+          ]
         },
         "_hash": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "paste": {
       "type": "object",
       "description": "Records a clipboard paste of text content into the document. For pasted URLs intended as citations or hyperlinks, use paste_link instead. For pasted image files, use image_upload instead. A paste event should be accompanied by a corresponding edit_block with source 'external' to record the content change in the edit stream.",
       "properties": {
-        "type": { "enum": ["paste"] },
+        "type": {
+          "enum": [
+            "paste"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time"
@@ -234,7 +325,10 @@
           "type": "object",
           "properties": {
             "source": {
-              "enum": ["external", "internal"],
+              "enum": [
+                "external",
+                "internal"
+              ],
               "description": "Origin of the pasted text. 'external': copied from outside the current TWFF document (e.g. a web page, another application, or a different file). 'internal': copied from within the same document."
             },
             "char_count": {
@@ -259,7 +353,7 @@
             },
             "source_tool": {
               "type": "string",
-              "description": "OPTIONAL. Self-reported by the author at paste time or anytime afterward: which AI tool (if any) the pasted content came from. Self-reported, never detected — its absence means nothing was reported, not that the paste is confirmed human-authored."
+              "description": "OPTIONAL. Self-reported by the author at paste time or anytime afterward: which AI tool (if any) the pasted content came from. Self-reported, never detected \u2014 its absence means nothing was reported, not that the paste is confirmed human-authored."
             },
             "source_tool_history": {
               "type": "array",
@@ -267,29 +361,59 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "value": { "type": "string" },
-                  "set_at": { "type": "string", "format": "date-time" },
-                  "via": { "type": "string", "description": "Which UI surface made this report, e.g. 'paste_prompt' or 'sidepanel'." }
+                  "value": {
+                    "type": "string"
+                  },
+                  "set_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "via": {
+                    "type": "string",
+                    "description": "Which UI surface made this report, e.g. 'paste_prompt' or 'sidepanel'."
+                  }
                 },
-                "required": ["value", "set_at"]
+                "required": [
+                  "value",
+                  "set_at"
+                ]
               }
+            },
+            "purpose": {
+              "enum": [
+                "study_stimulus_seed"
+              ],
+              "description": "OPTIONAL. Why this paste happened, independent of source or who performed it. 'study_stimulus_seed' marks this paste as a study-provided stimulus text being introduced into the document, regardless of who physically pasted it (a facilitator in person, or a participant themselves after being sent the passage remotely). A self-report, not a verified fact -- absence means nothing was flagged, not that the paste is confirmed ordinary content."
             }
           },
-          "required": ["source", "char_count", "position_start", "position_end"]
+          "required": [
+            "source",
+            "char_count",
+            "position_start",
+            "position_end"
+          ]
         },
         "_hash": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "paste_link": {
       "type": "object",
-      "description": "Records the insertion of a hyperlink or URL reference into the document. Covers both external web sources (citations, references) and internal TWFF container assets (e.g. a reference to an image in content/images/ or an entry in meta/references.bib). This event type is for the link metadata only — if the linked content was also pasted as text, record a separate paste event.",
+      "description": "Records the insertion of a hyperlink or URL reference into the document. Covers both external web sources (citations, references) and internal TWFF container assets (e.g. a reference to an image in content/images/ or an entry in meta/references.bib). This event type is for the link metadata only \u2014 if the linked content was also pasted as text, record a separate paste event.",
       "properties": {
-        "type": { "enum": ["paste_link"] },
+        "type": {
+          "enum": [
+            "paste_link"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time"
@@ -303,12 +427,15 @@
               "description": "The URL or relative container path being linked. When link_scope is 'external', this MUST be a fully qualified absolute URI (e.g. 'https://example.com/paper.pdf'). When link_scope is 'internal', this MUST be a relative path within the TWFF container (e.g. 'content/images/figure1.png' or 'meta/references.bib#ref-42'). The format 'uri-reference' is used rather than 'uri' precisely to accommodate these relative internal paths, which are valid URI references but not absolute URIs. Validators SHOULD enforce that internal links use relative paths and external links use absolute URIs, as JSON Schema cannot express this cross-field constraint natively."
             },
             "link_scope": {
-              "enum": ["external", "internal"],
+              "enum": [
+                "external",
+                "internal"
+              ],
               "description": "Indicates whether this link points to an external web resource or to an asset within the TWFF container. 'internal' links MUST use a relative path in the url field."
             },
             "title": {
               "type": "string",
-              "description": "Human-readable label for the link — e.g. the web page title for external sources, or the filename/caption for internal assets."
+              "description": "Human-readable label for the link \u2014 e.g. the web page title for external sources, or the filename/caption for internal assets."
             },
             "position": {
               "type": "integer",
@@ -316,21 +443,33 @@
               "description": "Character offset in the document where the link was inserted."
             }
           },
-          "required": ["url", "position", "link_scope"]
+          "required": [
+            "url",
+            "position",
+            "link_scope"
+          ]
         },
         "_hash": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "image_upload": {
       "type": "object",
       "description": "Records the insertion of an image or binary asset into the document. The file itself MUST be stored under content/images/ (or content/assets/) within the TWFF container. The filename recorded here must match the stored file.",
       "properties": {
-        "type": { "enum": ["image_upload"] },
+        "type": {
+          "enum": [
+            "image_upload"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time"
@@ -352,21 +491,33 @@
               "description": "Character offset in the document where the image was inserted."
             }
           },
-          "required": ["filename", "file_type", "position"]
+          "required": [
+            "filename",
+            "file_type",
+            "position"
+          ]
         },
         "_hash": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "ai_interaction": {
       "type": "object",
-      "description": "Records a user-initiated AI assistant interaction — a prompt explicitly submitted by the author to a chat interface, rewrite tool, or inline command. Distinct from ai_suggestion, which covers passive autocomplete. Logging these events supports EU AI Act Article 50 transparency obligations for AI-generated content disclosure.",
+      "description": "Records a user-initiated AI assistant interaction \u2014 a prompt explicitly submitted by the author to a chat interface, rewrite tool, or inline command. Distinct from ai_suggestion, which covers passive autocomplete. Logging these events supports EU AI Act Article 50 transparency obligations for AI-generated content disclosure.",
       "properties": {
-        "type": { "enum": ["ai_interaction"] },
+        "type": {
+          "enum": [
+            "ai_interaction"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time"
@@ -385,7 +536,7 @@
             "context_window": {
               "type": "string",
               "maxLength": 300,
-              "description": "Excerpt of surrounding document text sent as context to the AI. Truncated to 300 characters. This field records document context only — not the full prompt text, which is not stored."
+              "description": "Excerpt of surrounding document text sent as context to the AI. Truncated to 300 characters. This field records document context only \u2014 not the full prompt text, which is not stored."
             },
             "output_preview": {
               "type": "string",
@@ -410,7 +561,7 @@
             "content_after_length": {
               "type": "integer",
               "minimum": 0,
-              "description": "OPTIONAL. True length of content_after before truncation — see content_before_length."
+              "description": "OPTIONAL. True length of content_after before truncation \u2014 see content_before_length."
             },
             "position_start": {
               "type": "integer",
@@ -423,7 +574,12 @@
               "description": "Character offset of the end of the AI-affected range. Must be >= position_start. For insertions at a point, equals position_start."
             },
             "acceptance": {
-              "enum": ["fully_accepted", "partially_accepted", "modified", "rejected"],
+              "enum": [
+                "fully_accepted",
+                "partially_accepted",
+                "modified",
+                "rejected"
+              ],
               "description": "How the author handled the AI output. 'fully_accepted': inserted as-is with no edits. 'partially_accepted': a portion was used, the rest discarded. 'modified': the output was used as a base but significantly rewritten by the author. 'rejected': the output was discarded entirely."
             },
             "ai_chars": {
@@ -435,32 +591,53 @@
               "type": "number",
               "minimum": 0,
               "maximum": 1,
-              "description": "How much of the AI's suggested wording survived, unchanged, into the text the author actually kept — 0.0 (nothing survived) to 1.0 (used verbatim). Describes engagement (heavy revision, partial use, verbatim acceptance), not a judgment. Exists alongside acceptance, never in place of it. Implementers should compute this from data already captured (content_before/content_after, or the full pre-truncation text at capture time) rather than adding new instrumentation."
+              "description": "How much of the AI's suggested wording survived, unchanged, into the text the author actually kept \u2014 0.0 (nothing survived) to 1.0 (used verbatim). Describes engagement (heavy revision, partial use, verbatim acceptance), not a judgment. Exists alongside acceptance, never in place of it. Implementers should compute this from data already captured (content_before/content_after, or the full pre-truncation text at capture time) rather than adding new instrumentation."
             },
             "interaction_subtype": {
-              "enum": ["paraphrase", "grammar", "brainstorm", "other"],
-              "description": "OPTIONAL. Which built-in quick action (if any) produced this interaction: 'paraphrase' (reword existing text), 'grammar' (fix grammar/style with minimal rewording), 'brainstorm' (organize/expand ideas), or 'other' (a free-form chat prompt not tied to a quick action). Supports Research Theme 1 (Provenance of Human-AI Knowledge Work) — without this, there's data on *that* AI was used but not *why* the author reached for it. Absent for producers that don't yet distinguish quick-action types."
+              "enum": [
+                "paraphrase",
+                "grammar",
+                "brainstorm",
+                "other"
+              ],
+              "description": "OPTIONAL. Which built-in quick action (if any) produced this interaction: 'paraphrase' (reword existing text), 'grammar' (fix grammar/style with minimal rewording), 'brainstorm' (organize/expand ideas), or 'other' (a free-form chat prompt not tied to a quick action). Supports Research Theme 1 (Provenance of Human-AI Knowledge Work) \u2014 without this, there's data on *that* AI was used but not *why* the author reached for it. Absent for producers that don't yet distinguish quick-action types."
             },
             "attribution_method": {
-              "enum": ["similarity_heuristic"],
-              "description": "OPTIONAL. Present only when this event's classification as an ai_interaction came from a text-similarity heuristic (a pasted or typed text matched a recently-produced AI output closely enough to be inferred as that output) rather than being directly observed (e.g. a real accept/insert click, or a native provider's own suggestion-acceptance signal). Its absence means directly observed. A confidence/provenance marker, not a judgment — lets analysis filter or flag lower-confidence inferred attributions separately rather than treating them as equal-confidence ground truth."
+              "enum": [
+                "similarity_heuristic"
+              ],
+              "description": "OPTIONAL. Present only when this event's classification as an ai_interaction came from a text-similarity heuristic (a pasted or typed text matched a recently-produced AI output closely enough to be inferred as that output) rather than being directly observed (e.g. a real accept/insert click, or a native provider's own suggestion-acceptance signal). Its absence means directly observed. A confidence/provenance marker, not a judgment \u2014 lets analysis filter or flag lower-confidence inferred attributions separately rather than treating them as equal-confidence ground truth."
             }
           },
-          "required": ["model", "output_preview", "position_start", "position_end", "acceptance"]
+          "required": [
+            "model",
+            "output_preview",
+            "position_start",
+            "position_end",
+            "acceptance"
+          ]
         },
         "_hash": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "ai_suggestion": {
       "type": "object",
       "description": "Records a passive AI inline suggestion or autocomplete completion (e.g. ghost text, tab-completion). Distinct from ai_interaction, which is user-initiated. The key distinction: ai_suggestion is triggered automatically by the system; ai_interaction is triggered explicitly by the author. Also supports EU AI Act Article 50 transparency logging.",
       "properties": {
-        "type": { "enum": ["ai_suggestion"] },
+        "type": {
+          "enum": [
+            "ai_suggestion"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time"
@@ -504,7 +681,7 @@
             "content_after_length": {
               "type": "integer",
               "minimum": 0,
-              "description": "OPTIONAL. True length of content_after before truncation — see content_before_length."
+              "description": "OPTIONAL. True length of content_after before truncation \u2014 see content_before_length."
             },
             "position_start": {
               "type": "integer",
@@ -517,31 +694,51 @@
               "description": "Character offset of the end of the suggestion range. Must be >= position_start."
             },
             "acceptance": {
-              "enum": ["fully_accepted", "partially_accepted", "modified", "rejected"],
-              "description": "Author's response to the inline suggestion."
+              "enum": [
+                "fully_accepted",
+                "partially_accepted",
+                "modified",
+                "rejected",
+                "pending"
+              ],
+              "description": "Author's response to the inline suggestion. 'pending' means the suggestion was shown but its outcome is recorded separately: some implementations (e.g. inline chat assistants) log a passive ai_suggestion at the moment the suggestion appears and keep it 'pending', then log the author's accept or reject as a paired ai_interaction event. Consumers computing an acceptance rate must treat 'pending' as 'not yet resolved' and exclude it from accepted and rejected counts, so the paired ai_interaction is the single source of truth for the outcome."
             },
             "similarity_score": {
               "type": "number",
               "minimum": 0,
               "maximum": 1,
-              "description": "Same meaning as on ai_interaction — how much of the suggested wording survived into the kept text. See that definition for full description."
+              "description": "Same meaning as on ai_interaction \u2014 how much of the suggested wording survived into the kept text. See that definition for full description."
             }
           },
-          "required": ["model", "output_preview", "position_start", "position_end", "acceptance"]
+          "required": [
+            "model",
+            "output_preview",
+            "position_start",
+            "position_end",
+            "acceptance"
+          ]
         },
         "_hash": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "checkpoint": {
       "type": "object",
-      "description": "A periodic snapshot of document statistics for continuity verification and contribution analysis. At minimum, one of char_count_total or word_count_total MUST be present — a checkpoint with no counts provides no analytical value. Implementations should emit a checkpoint at regular intervals (e.g. every 5 minutes) and at session_end.",
+      "description": "A periodic snapshot of document statistics for continuity verification and contribution analysis. At minimum, one of char_count_total or word_count_total MUST be present \u2014 a checkpoint with no counts provides no analytical value. Implementations should emit a checkpoint at regular intervals (e.g. every 5 minutes) and at session_end.",
       "properties": {
-        "type": { "enum": ["checkpoint"] },
+        "type": {
+          "enum": [
+            "checkpoint"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time"
@@ -566,8 +763,16 @@
             }
           },
           "anyOf": [
-            { "required": ["char_count_total"] },
-            { "required": ["word_count_total"] }
+            {
+              "required": [
+                "char_count_total"
+              ]
+            },
+            {
+              "required": [
+                "word_count_total"
+              ]
+            }
           ]
         },
         "_hash": {
@@ -575,24 +780,35 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "focus_change": {
       "type": "object",
-      "description": "RESERVED — Planned for full specification in v0.3. Records when the author navigates away from the writing editor (e.g. switches browser tabs or application focus). Critical for timing integrity: without focus_change events, session duration cannot distinguish active writing time from idle time. Implementations MAY emit this event now using the fields below; the full specification including DPV mapping is forthcoming.",
+      "description": "RESERVED \u2014 Planned for full specification in v0.3. Records when the author navigates away from the writing editor (e.g. switches browser tabs or application focus). Critical for timing integrity: without focus_change events, session duration cannot distinguish active writing time from idle time. Implementations MAY emit this event now using the fields below; the full specification including DPV mapping is forthcoming.",
       "properties": {
-        "type": { "enum": ["focus_change"] },
+        "type": {
+          "enum": [
+            "focus_change"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time",
-          "description": "Timestamp of the focus-change event (either focus lost or focus regained — specify in direction)."
+          "description": "Timestamp of the focus-change event (either focus lost or focus regained \u2014 specify in direction)."
         },
         "meta": {
           "type": "object",
           "properties": {
             "direction": {
-              "enum": ["lost", "regained"],
+              "enum": [
+                "lost",
+                "regained"
+              ],
               "description": "Whether the editor lost focus (author navigated away) or regained focus (author returned)."
             },
             "duration_ms": {
@@ -607,14 +823,22 @@
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     },
-
     "chat_interaction": {
       "type": "object",
-      "description": "RESERVED — Planned for full specification in v0.3. Records a multi-turn AI conversation session conducted during writing (e.g. a full chat thread in a side panel). The full conversation transcript SHOULD be stored separately in meta/chat-transcript.json within the TWFF container; this event records a pointer and summary only. Implementations MAY emit this event now using the fields below.",
+      "description": "RESERVED \u2014 Planned for full specification in v0.3. Records a multi-turn AI conversation session conducted during writing (e.g. a full chat thread in a side panel). The full conversation transcript SHOULD be stored separately in meta/chat-transcript.json within the TWFF container; this event records a pointer and summary only. Implementations MAY emit this event now using the fields below.",
       "properties": {
-        "type": { "enum": ["chat_interaction"] },
+        "type": {
+          "enum": [
+            "chat_interaction"
+          ]
+        },
         "timestamp": {
           "type": "string",
           "format": "date-time",
@@ -642,15 +866,21 @@
               "description": "Relative path to the full chat transcript within the TWFF container (e.g. 'meta/chat-transcript.json'). The referenced file is OPTIONAL in the container but SHOULD be present when this event is recorded."
             }
           },
-          "required": ["model"]
+          "required": [
+            "model"
+          ]
         },
         "_hash": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
       },
-      "required": ["type", "timestamp", "meta", "_hash"]
+      "required": [
+        "type",
+        "timestamp",
+        "meta",
+        "_hash"
+      ]
     }
-
   }
 }
