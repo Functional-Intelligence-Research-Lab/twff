@@ -288,13 +288,44 @@
                 "study_stimulus_seed"
               ],
               "description": "OPTIONAL. Same meaning as paste.meta.purpose -- set on the paired edit_block (source: 'external') that accompanies a paste flagged this way, at the same timestamp."
+            },
+            "position_reliability": {
+              "enum": [
+                "exact",
+                "unknown"
+              ],
+              "description": "OPTIONAL. Defaults to 'exact' when position_start/position_end are present and trustworthy. Set to 'unknown' when the implementation could not determine where in the document this event applies \u2014 e.g. a human-edit diff that found no locatable change, or a paste whose text could not be located in the document afterward. When 'unknown', position_start/position_end MUST be omitted rather than set to a placeholder value \u2014 a placeholder would read as a real, confirmed position to anything consuming this event."
             }
           },
           "required": [
-            "source",
-            "position_start",
-            "position_end"
-          ]
+            "source"
+          ],
+          "if": {
+            "required": [
+              "position_reliability"
+            ],
+            "properties": {
+              "position_reliability": {
+                "const": "unknown"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "position_start"
+                  ]
+                },
+                {
+                  "required": [
+                    "position_end"
+                  ]
+                }
+              ]
+            }
+          }
         },
         "_hash": {
           "type": "string",
@@ -384,14 +415,45 @@
                 "study_stimulus_seed"
               ],
               "description": "OPTIONAL. Why this paste happened, independent of source or who performed it. 'study_stimulus_seed' marks this paste as a study-provided stimulus text being introduced into the document, regardless of who physically pasted it (a facilitator in person, or a participant themselves after being sent the passage remotely). A self-report, not a verified fact -- absence means nothing was flagged, not that the paste is confirmed ordinary content."
+            },
+            "position_reliability": {
+              "enum": [
+                "exact",
+                "unknown"
+              ],
+              "description": "OPTIONAL. Defaults to 'exact' when position_start/position_end are present and trustworthy. Set to 'unknown' when the implementation could not determine where in the document this event applies \u2014 e.g. a human-edit diff that found no locatable change, or a paste whose text could not be located in the document afterward. When 'unknown', position_start/position_end MUST be omitted rather than set to a placeholder value \u2014 a placeholder would read as a real, confirmed position to anything consuming this event."
             }
           },
           "required": [
             "source",
-            "char_count",
-            "position_start",
-            "position_end"
-          ]
+            "char_count"
+          ],
+          "if": {
+            "required": [
+              "position_reliability"
+            ],
+            "properties": {
+              "position_reliability": {
+                "const": "unknown"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "position_start"
+                  ]
+                },
+                {
+                  "required": [
+                    "position_end"
+                  ]
+                }
+              ]
+            }
+          }
         },
         "_hash": {
           "type": "string",
@@ -607,15 +669,46 @@
                 "similarity_heuristic"
               ],
               "description": "OPTIONAL. Present only when this event's classification as an ai_interaction came from a text-similarity heuristic (a pasted or typed text matched a recently-produced AI output closely enough to be inferred as that output) rather than being directly observed (e.g. a real accept/insert click, or a native provider's own suggestion-acceptance signal). Its absence means directly observed. A confidence/provenance marker, not a judgment \u2014 lets analysis filter or flag lower-confidence inferred attributions separately rather than treating them as equal-confidence ground truth."
+            },
+            "position_reliability": {
+              "enum": [
+                "exact",
+                "unknown"
+              ],
+              "description": "OPTIONAL. Defaults to 'exact' when position_start/position_end are present and trustworthy. Set to 'unknown' when the implementation could not determine where in the document this event applies \u2014 e.g. a human-edit diff that found no locatable change, or a paste whose text could not be located in the document afterward. When 'unknown', position_start/position_end MUST be omitted rather than set to a placeholder value \u2014 a placeholder would read as a real, confirmed position to anything consuming this event."
             }
           },
           "required": [
             "model",
             "output_preview",
-            "position_start",
-            "position_end",
             "acceptance"
-          ]
+          ],
+          "if": {
+            "required": [
+              "position_reliability"
+            ],
+            "properties": {
+              "position_reliability": {
+                "const": "unknown"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "position_start"
+                  ]
+                },
+                {
+                  "required": [
+                    "position_end"
+                  ]
+                }
+              ]
+            }
+          }
         },
         "_hash": {
           "type": "string",
@@ -708,15 +801,46 @@
               "minimum": 0,
               "maximum": 1,
               "description": "Same meaning as on ai_interaction \u2014 how much of the suggested wording survived into the kept text. See that definition for full description."
+            },
+            "position_reliability": {
+              "enum": [
+                "exact",
+                "unknown"
+              ],
+              "description": "OPTIONAL. Defaults to 'exact' when position_start/position_end are present and trustworthy. Set to 'unknown' when the implementation could not determine where in the document this event applies \u2014 e.g. a human-edit diff that found no locatable change, or a paste whose text could not be located in the document afterward. When 'unknown', position_start/position_end MUST be omitted rather than set to a placeholder value \u2014 a placeholder would read as a real, confirmed position to anything consuming this event."
             }
           },
           "required": [
             "model",
             "output_preview",
-            "position_start",
-            "position_end",
             "acceptance"
-          ]
+          ],
+          "if": {
+            "required": [
+              "position_reliability"
+            ],
+            "properties": {
+              "position_reliability": {
+                "const": "unknown"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "position_start"
+                  ]
+                },
+                {
+                  "required": [
+                    "position_end"
+                  ]
+                }
+              ]
+            }
+          }
         },
         "_hash": {
           "type": "string",
